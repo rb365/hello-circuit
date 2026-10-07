@@ -18,3 +18,37 @@
 .brand-name{display:block}.brand-break{display:inline}.brand-symbol{flex:none}.brand-wordmark{min-width:0}@media(max-width:760px){.brand{gap:9px;line-height:1.1;flex:none}.brand-break{display:block;height:2px}.brand small{display:none}.site-header{gap:12px}.header-actions{flex:none}}
 
 .brand-mark{display:block;width:44px;height:44px;flex:none}@media(max-width:760px){.brand-mark{width:32px;height:36px}}
+
+/* Wires sit over the artwork, while the gold pins and component controls stay usable. */
+#wires{z-index:3}
+.part{z-index:auto}
+.part-label,.part-note,.part-control,.push-toggle{position:relative;z-index:4}
+.pin{z-index:6}
+.wire,.wire-casing,.pin-leader{vector-effect:non-scaling-stroke;pointer-events:none;fill:none;stroke-linejoin:round;stroke-linecap:round}
+.wire{stroke-width:3}
+.wire-casing{stroke:white;stroke-width:6;opacity:.9}
+.wire-hit{fill:none;stroke:transparent;stroke-width:13;vector-effect:non-scaling-stroke;pointer-events:stroke;cursor:pointer;outline:none}
+#wires.has-active-wire g[data-wire]:not(.active-wire){opacity:.24}
+#wires .active-wire .wire{stroke-width:4}
+#wires .active-wire .wire-casing{stroke:#ffd9bc;stroke-width:9;opacity:1}
+#wires .wire-hit:focus-visible{stroke:#ff784944;stroke-width:13}
+.pin.wire-end{background:var(--orange);border-color:white;box-shadow:0 0 0 3px #ff78497a,0 0 0 5px white}
+#pin-labels{position:absolute;inset:0;width:1600px;height:1000px;overflow:visible;z-index:5;pointer-events:none}
+.pin-callout .pin-leader{stroke:#8c9fb9;stroke-width:1;stroke-dasharray:2 3}
+.pin-callout rect{fill:#fff;stroke:#c3d2e8;stroke-width:1}
+.pin-callout text{fill:var(--navy);font:600 11px var(--mono)}
+.pin-callout.emphasized rect{fill:#fff4ea;stroke:var(--orange);stroke-width:1.5}
+.pin-callout.emphasized .pin-leader{stroke:#cb6737;stroke-width:1.5}
+.pin-label-toggle{display:inline-flex;gap:5px;align-items:center;white-space:nowrap;font-size:11px;color:var(--ink);cursor:pointer}
+.pin-label-toggle input{margin:0;accent-color:var(--blue);width:13px;height:13px}
+.circuit-footer{gap:12px;flex-wrap:wrap}
+#wire-hint{flex:1 1 220px;line-height:1.5}
+.wire-connection{border-left:3px solid var(--wire-color);padding-left:12px;display:grid;gap:10px}
+.wire-connection>div{display:flex;align-items:center;gap:9px;font-size:12px}
+.wire-connection span{color:var(--muted);min-width:32px;font-size:11px}
+.wire-connection b{font-weight:600}
+.wire-connection code{margin-left:auto;padding:3px 7px;background:#edf3ff;border-radius:4px;font:600 12px var(--mono);color:var(--blue)}
+.uno-part .part-label{margin-left:0;margin-right:auto}
+.uno-part .part-note{text-align:left;width:max-content}
+.straight-wire-hit{fill:transparent;stroke:none;pointer-events:all}
+.straight-wire-hit:focus-visible{stroke:#ff784944;stroke-width:3}
