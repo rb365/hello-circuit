@@ -16,3 +16,5 @@
 .web-preview iframe{display:block}.help-callout b:not(:first-child){display:block;margin-top:14px}
 
 .brand-name{display:block}.brand-break{display:inline}.brand-symbol{flex:none}.brand-wordmark{min-width:0}@media(max-width:760px){.brand{gap:9px;line-height:1.1;flex:none}.brand-break{display:block;height:2px}.brand small{display:none}.site-header{gap:12px}.header-actions{flex:none}}
+
+.brand-mark{display:block;width:44px;height:44px;flex:none}@media(max-width:760px){.brand-mark{width:32px;height:36px}}
