@@ -1,0 +1,1436 @@
+{
+  "reviewedAt": "2026-10-07T08:25:05.180Z",
+  "scope": "Prepared wiring and selected signal-model behavior; not a full electronics, mechanical, radio, OS or mains simulation.",
+  "pinProvenance": "Real @wokwi/elements 1.9.2 TypeScript pinInfo; original component metadata for native API boards/custom parts.",
+  "layoutCheck": "Estimated metadata body, label and control rectangles, not a browser screenshot check.",
+  "programFieldsPreserved": true,
+  "totalExamples": 49,
+  "preparedScenes": 49,
+  "assertions": 475,
+  "issues": [],
+  "results": [
+    {
+      "path": "chapter-02/02-hello-world-johnny-five",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Source LED pin 13 reaches a resistor and external LED.",
+        "LED light cathode has a reference ground or isolated optocoupler return.",
+        "LED light is wired through a finite series resistor."
+      ],
+      "parts": 3,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-02/03-hello-world-stop",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Source LED pin 13 reaches a resistor and external LED.",
+        "LED light cathode has a reference ground or isolated optocoupler return.",
+        "LED light is wired through a finite series resistor."
+      ],
+      "parts": 3,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-04/01-photoresistor",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap."
+      ],
+      "parts": 3,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-04/02-photoresistor-threshold",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap."
+      ],
+      "parts": 3,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-04/03-temperature",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Source TMP36 has its matching circuit component."
+      ],
+      "parts": 2,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-04/04-temperature-repl",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Source TMP36 has its matching circuit component."
+      ],
+      "parts": 2,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-04/05-button",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Source button pin 2 has a physical button.",
+        "Button 2 follows the book's active-high/pull-down wiring."
+      ],
+      "parts": 3,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-05/01-experiment-led",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Source LED pin 2 reaches a resistor and external LED.",
+        "Source LED pin 3 reaches a resistor and external LED.",
+        "LED first-light cathode has a reference ground or isolated optocoupler return.",
+        "LED first-light is wired through a finite series resistor.",
+        "LED second-light cathode has a reference ground or isolated optocoupler return.",
+        "LED second-light is wired through a finite series resistor."
+      ],
+      "parts": 5,
+      "wires": 6,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-05/02-animate-led",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Source LED pin 3 reaches a resistor and external LED.",
+        "LED light cathode has a reference ground or isolated optocoupler return.",
+        "LED light is wired through a finite series resistor."
+      ],
+      "parts": 3,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-05/03-timer-led-simple",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Source LED pin 3 reaches a resistor and external LED.",
+        "LED light cathode has a reference ground or isolated optocoupler return.",
+        "LED light is wired through a finite series resistor."
+      ],
+      "parts": 3,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-05/04-nightlight",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Source LED pin 3 reaches a resistor and external LED.",
+        "LED light cathode has a reference ground or isolated optocoupler return.",
+        "LED light is wired through a finite series resistor."
+      ],
+      "parts": 5,
+      "wires": 7,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-05/05-weatherball",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "RGB R has separate source pin 3 through resistance.",
+        "RGB G has separate source pin 5 through resistance.",
+        "RGB B has separate source pin 6 through resistance.",
+        "RGB common cathode is grounded."
+      ],
+      "parts": 5,
+      "wires": 7,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-05/06-timer-lcd",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "lcd lcd has powered, correctly routed pins.",
+        "Source LED pin 6 reaches a resistor and external LED.",
+        "LED light cathode has a reference ground or isolated optocoupler return.",
+        "LED light is wired through a finite series resistor.",
+        "Source button pin 2 has a physical button.",
+        "Button 2 follows the book's active-high/pull-down wiring.",
+        "Source button pin 3 has a physical button.",
+        "Button 3 follows the book's active-high/pull-down wiring.",
+        "Source button pin 4 has a physical button.",
+        "Button 4 follows the book's active-high/pull-down wiring.",
+        "LCD roles match original [7,8,9,10,11,12] source order.",
+        "LCD A/K supply lights the backlight.",
+        "LCD RW is held LOW.",
+        "LCD contrast potentiometer supplies a divided voltage."
+      ],
+      "parts": 11,
+      "wires": 29,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "lcd",
+          "type": "lcd",
+          "powered": true,
+          "pins": {
+            "RS": 7,
+            "E": 8,
+            "D4": 9,
+            "D5": 10,
+            "D6": 11,
+            "D7": 12
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-05/07-timer-lcd-piezo",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "lcd lcd has powered, correctly routed pins.",
+        "Source button pin 2 has a physical button.",
+        "Button 2 follows the book's active-high/pull-down wiring.",
+        "Source button pin 3 has a physical button.",
+        "Button 3 follows the book's active-high/pull-down wiring.",
+        "Source button pin 4 has a physical button.",
+        "Button 4 follows the book's active-high/pull-down wiring.",
+        "LCD roles match original [7,8,9,10,11,12] source order.",
+        "LCD A/K supply lights the backlight.",
+        "LCD RW is held LOW.",
+        "LCD contrast potentiometer supplies a divided voltage."
+      ],
+      "parts": 10,
+      "wires": 28,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "lcd",
+          "type": "lcd",
+          "powered": true,
+          "pins": {
+            "RS": 7,
+            "E": 8,
+            "D4": 9,
+            "D5": 10,
+            "D6": 11,
+            "D7": 12
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-06/01-motor-basic",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Motor pin6 drives the MOSFET gate.",
+        "Motor source has a physical motor load.",
+        "Half PWM drives the DC load at half averaged supply in the selected model."
+      ],
+      "parts": 7,
+      "wires": 11,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-06/02-servo-basic",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Servo signal matches source pin 6.",
+        "Servo supply and ground are connected.",
+        "A source pin6 servo command reaches the visible device."
+      ],
+      "parts": 2,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-06/03-motor-test",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Motor-pair source has a powered H-bridge and motors.",
+        "H-bridge 1A matches source 12.",
+        "H-bridge 2A matches source 11.",
+        "H-bridge 3A matches source 4.",
+        "H-bridge 4A matches source 5.",
+        "Both source motors have loads.",
+        "Dir/HIGH plus inverted half PWM produces two half-speed signal-model loads."
+      ],
+      "parts": 5,
+      "wires": 14,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-06/04-rover",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Motor-pair source has a powered H-bridge and motors.",
+        "H-bridge 1A matches source 12.",
+        "H-bridge 2A matches source 11.",
+        "H-bridge 3A matches source 4.",
+        "H-bridge 4A matches source 5.",
+        "Both source motors have loads.",
+        "Dir/HIGH plus inverted half PWM produces two half-speed signal-model loads."
+      ],
+      "parts": 5,
+      "wires": 14,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-07/01-gps",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "gps gps has powered, correctly routed pins.",
+        "GPS TX→Arduino RX11 / RX→TX10 matches SoftwareSerial source."
+      ],
+      "parts": 2,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "gps",
+          "type": "gps",
+          "powered": true,
+          "pins": {
+            "TX": 11,
+            "RX": 10
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-07/02-compass",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "compass compass has powered, correctly routed pins.",
+        "Source HMC5883L has its matching circuit component."
+      ],
+      "parts": 2,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "compass",
+          "type": "compass",
+          "powered": true,
+          "pins": {
+            "SDA": 18,
+            "SCL": 19
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-07/03-compass-lcd",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "compass compass has powered, correctly routed pins.",
+        "grove-lcd grove has powered, correctly routed pins.",
+        "Source HMC5883L has its matching circuit component.",
+        "Source JHD1313M1 has its matching circuit component."
+      ],
+      "parts": 3,
+      "wires": 8,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "compass",
+          "type": "compass",
+          "powered": true,
+          "pins": {
+            "SDA": 18,
+            "SCL": 19
+          }
+        },
+        {
+          "id": "grove",
+          "type": "grove-lcd",
+          "powered": true,
+          "pins": {
+            "SDA": 18,
+            "SCL": 19
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-07/04-multi-sensor",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "compass compass has powered, correctly routed pins.",
+        "grove-lcd grove has powered, correctly routed pins.",
+        "weather weather has powered, correctly routed pins.",
+        "accelerometer accel has powered, correctly routed pins.",
+        "Source HMC5883L has its matching circuit component.",
+        "Source BMP180 has its matching circuit component.",
+        "Source ADXL345 has its matching circuit component.",
+        "Source JHD1313M1 has its matching circuit component."
+      ],
+      "parts": 5,
+      "wires": 16,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "compass",
+          "type": "compass",
+          "powered": true,
+          "pins": {
+            "SDA": 18,
+            "SCL": 19
+          }
+        },
+        {
+          "id": "grove",
+          "type": "grove-lcd",
+          "powered": true,
+          "pins": {
+            "SDA": 18,
+            "SCL": 19
+          }
+        },
+        {
+          "id": "weather",
+          "type": "weather",
+          "powered": true,
+          "pins": {
+            "SDA": 18,
+            "SCL": 19
+          }
+        },
+        {
+          "id": "accel",
+          "type": "accelerometer",
+          "powered": true,
+          "pins": {
+            "SDA": 18,
+            "SCL": 19
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-08/01-hello-tessel",
+      "platform": "tessel",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap."
+      ],
+      "parts": 1,
+      "wires": 0,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-08/02-t2-blink",
+      "platform": "tessel",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Source LED pin A0 reaches a resistor and external LED.",
+        "LED light cathode has a reference ground or isolated optocoupler return.",
+        "LED light is wired through a finite series resistor."
+      ],
+      "parts": 3,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-09/01-prototype-switch",
+      "platform": "tessel",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "LED optical-A0-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A0-output is wired through a finite series resistor.",
+        "LED optical-A1-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A1-output is wired through a finite series resistor.",
+        "Remote GPIO A0 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A0 input/output grounds remain separate.",
+        "GPIO A0 lights its optocoupler input.",
+        "GPIO A0 drives its isolated LED signal load from off to on.",
+        "GPIO A0 optical pulse has no model power/current warnings.",
+        "Remote GPIO A1 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A1 input/output grounds remain separate.",
+        "GPIO A1 lights its optocoupler input.",
+        "GPIO A1 drives its isolated LED signal load from off to on.",
+        "GPIO A1 optical pulse has no model power/current warnings."
+      ],
+      "parts": 10,
+      "wires": 14,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-10/01-pico-led-blink",
+      "platform": "pico",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap."
+      ],
+      "parts": 1,
+      "wires": 0,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-10/02-pico-bmp180",
+      "platform": "pico",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "weather weather has powered, correctly routed pins."
+      ],
+      "parts": 2,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "weather",
+          "type": "weather",
+          "powered": true,
+          "pins": {
+            "SDA": 23,
+            "SCL": 22
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-10/03-pico-nokia-5110-timer",
+      "platform": "pico",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "nokia-lcd display has powered, correctly routed pins."
+      ],
+      "parts": 2,
+      "wires": 7,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "display",
+          "type": "nokia-lcd",
+          "powered": true,
+          "pins": {
+            "SCLK": 19,
+            "DIN": 21,
+            "DC": 29,
+            "CE": 30,
+            "RST": 31
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-10/04-pico-weather",
+      "platform": "pico",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "weather weather has powered, correctly routed pins.",
+        "nokia-lcd display has powered, correctly routed pins."
+      ],
+      "parts": 3,
+      "wires": 11,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "weather",
+          "type": "weather",
+          "powered": true,
+          "pins": {
+            "SDA": 23,
+            "SCL": 22
+          }
+        },
+        {
+          "id": "display",
+          "type": "nokia-lcd",
+          "powered": true,
+          "pins": {
+            "SCLK": 19,
+            "DIN": 21,
+            "DC": 29,
+            "CE": 30,
+            "RST": 31
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-11/02-rpi3-blink-sysfs-js",
+      "platform": "raspi",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "LED light cathode has a reference ground or isolated optocoupler return.",
+        "LED light is wired through a finite series resistor."
+      ],
+      "parts": 3,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-11/03-rpi3-blink-wiring-pi",
+      "platform": "raspi",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "LED light cathode has a reference ground or isolated optocoupler return.",
+        "LED light is wired through a finite series resistor."
+      ],
+      "parts": 3,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-11/04-rpi3-blink-j5",
+      "platform": "raspi",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Source LED pin GPIO4 reaches a resistor and external LED.",
+        "LED light cathode has a reference ground or isolated optocoupler return.",
+        "LED light is wired through a finite series resistor."
+      ],
+      "parts": 3,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-11/08-bbb-blink-j5",
+      "platform": "beaglebone",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap."
+      ],
+      "parts": 1,
+      "wires": 0,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-08/03-t2-bmp180",
+      "platform": "tessel",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "weather weather has powered, correctly routed pins.",
+        "Source BMP180 has its matching circuit component."
+      ],
+      "parts": 2,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "weather",
+          "type": "weather",
+          "powered": true,
+          "pins": {
+            "SDA": 1,
+            "SCL": 0
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-08/04-t2-weather",
+      "platform": "tessel",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "weather weather has powered, correctly routed pins.",
+        "Source BMP180 has its matching circuit component."
+      ],
+      "parts": 2,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "weather",
+          "type": "weather",
+          "powered": true,
+          "pins": {
+            "SDA": 1,
+            "SCL": 0
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-08/05-t2-rover",
+      "platform": "tessel",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "Motor-pair source has a powered H-bridge and motors.",
+        "H-bridge 1A matches source A4.",
+        "H-bridge 2A matches source A5.",
+        "H-bridge 3A matches source B4.",
+        "H-bridge 4A matches source B5.",
+        "Both source motors have loads.",
+        "Dir/HIGH plus inverted half PWM produces two half-speed signal-model loads."
+      ],
+      "parts": 5,
+      "wires": 14,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-09/02-remote-switch",
+      "platform": "tessel",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "LED optical-A0-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A0-output is wired through a finite series resistor.",
+        "LED optical-A1-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A1-output is wired through a finite series resistor.",
+        "LED optical-A2-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A2-output is wired through a finite series resistor.",
+        "LED optical-A3-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A3-output is wired through a finite series resistor.",
+        "LED optical-A4-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A4-output is wired through a finite series resistor.",
+        "LED optical-A5-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A5-output is wired through a finite series resistor.",
+        "Remote GPIO A0 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A0 input/output grounds remain separate.",
+        "GPIO A0 lights its optocoupler input.",
+        "GPIO A0 drives its isolated LED signal load from off to on.",
+        "GPIO A0 optical pulse has no model power/current warnings.",
+        "Remote GPIO A1 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A1 input/output grounds remain separate.",
+        "GPIO A1 lights its optocoupler input.",
+        "GPIO A1 drives its isolated LED signal load from off to on.",
+        "GPIO A1 optical pulse has no model power/current warnings.",
+        "Remote GPIO A2 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A2 input/output grounds remain separate.",
+        "GPIO A2 lights its optocoupler input.",
+        "GPIO A2 drives its isolated LED signal load from off to on.",
+        "GPIO A2 optical pulse has no model power/current warnings.",
+        "Remote GPIO A3 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A3 input/output grounds remain separate.",
+        "GPIO A3 lights its optocoupler input.",
+        "GPIO A3 drives its isolated LED signal load from off to on.",
+        "GPIO A3 optical pulse has no model power/current warnings.",
+        "Remote GPIO A4 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A4 input/output grounds remain separate.",
+        "GPIO A4 lights its optocoupler input.",
+        "GPIO A4 drives its isolated LED signal load from off to on.",
+        "GPIO A4 optical pulse has no model power/current warnings.",
+        "Remote GPIO A5 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A5 input/output grounds remain separate.",
+        "GPIO A5 lights its optocoupler input.",
+        "GPIO A5 drives its isolated LED signal load from off to on.",
+        "GPIO A5 optical pulse has no model power/current warnings."
+      ],
+      "parts": 26,
+      "wires": 42,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-09/03-gesture-i2c-test",
+      "platform": "tessel",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "gesture gesture has powered, correctly routed pins."
+      ],
+      "parts": 2,
+      "wires": 5,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "gesture",
+          "type": "gesture",
+          "powered": true,
+          "pins": {
+            "SDA": 1,
+            "SCL": 0,
+            "INT": 2
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-09/04-gesture",
+      "platform": "tessel",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "gesture gesture has powered, correctly routed pins."
+      ],
+      "parts": 2,
+      "wires": 5,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "gesture",
+          "type": "gesture",
+          "powered": true,
+          "pins": {
+            "SDA": 1,
+            "SCL": 0,
+            "INT": 2
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-09/05-gesture-switches",
+      "platform": "tessel",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "gesture gesture has powered, correctly routed pins.",
+        "LED optical-A3-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A3-output is wired through a finite series resistor.",
+        "LED optical-A4-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A4-output is wired through a finite series resistor.",
+        "LED optical-A5-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A5-output is wired through a finite series resistor.",
+        "LED optical-A6-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A6-output is wired through a finite series resistor.",
+        "LED optical-A7-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-A7-output is wired through a finite series resistor.",
+        "LED optical-B0-output cathode has a reference ground or isolated optocoupler return.",
+        "LED optical-B0-output is wired through a finite series resistor.",
+        "Remote GPIO A3 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A3 input/output grounds remain separate.",
+        "GPIO A3 lights its optocoupler input.",
+        "GPIO A3 drives its isolated LED signal load from off to on.",
+        "GPIO A3 optical pulse has no model power/current warnings.",
+        "Remote GPIO A4 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A4 input/output grounds remain separate.",
+        "GPIO A4 lights its optocoupler input.",
+        "GPIO A4 drives its isolated LED signal load from off to on.",
+        "GPIO A4 optical pulse has no model power/current warnings.",
+        "Remote GPIO A5 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A5 input/output grounds remain separate.",
+        "GPIO A5 lights its optocoupler input.",
+        "GPIO A5 drives its isolated LED signal load from off to on.",
+        "GPIO A5 optical pulse has no model power/current warnings.",
+        "Remote GPIO A6 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A6 input/output grounds remain separate.",
+        "GPIO A6 lights its optocoupler input.",
+        "GPIO A6 drives its isolated LED signal load from off to on.",
+        "GPIO A6 optical pulse has no model power/current warnings.",
+        "Remote GPIO A7 reaches an isolated optocoupler input.",
+        "Optocoupler optical-A7 input/output grounds remain separate.",
+        "GPIO A7 lights its optocoupler input.",
+        "GPIO A7 drives its isolated LED signal load from off to on.",
+        "GPIO A7 optical pulse has no model power/current warnings.",
+        "Remote GPIO B0 reaches an isolated optocoupler input.",
+        "Optocoupler optical-B0 input/output grounds remain separate.",
+        "GPIO B0 lights its optocoupler input.",
+        "GPIO B0 drives its isolated LED signal load from off to on.",
+        "GPIO B0 optical pulse has no model power/current warnings."
+      ],
+      "parts": 27,
+      "wires": 47,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "gesture",
+          "type": "gesture",
+          "powered": true,
+          "pins": {
+            "SDA": 1,
+            "SCL": 0,
+            "INT": 2
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-11/05-rpi3-bmp180",
+      "platform": "raspi",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "weather weather has powered, correctly routed pins.",
+        "Source BMP180 has its matching circuit component."
+      ],
+      "parts": 2,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "weather",
+          "type": "weather",
+          "powered": true,
+          "pins": {
+            "SDA": 2,
+            "SCL": 3
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-11/06-rpi3-weather",
+      "platform": "raspi",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "weather weather has powered, correctly routed pins.",
+        "Source BMP180 has its matching circuit component."
+      ],
+      "parts": 2,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "weather",
+          "type": "weather",
+          "powered": true,
+          "pins": {
+            "SDA": 2,
+            "SCL": 3
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-11/07-arduino-uno-weather",
+      "platform": "uno",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "weather weather has powered, correctly routed pins.",
+        "Source BMP180 has its matching circuit component."
+      ],
+      "parts": 2,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "weather",
+          "type": "weather",
+          "powered": true,
+          "pins": {
+            "SDA": 18,
+            "SCL": 19
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-11/09-bbb-weather",
+      "platform": "beaglebone",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "weather weather has powered, correctly routed pins.",
+        "Source BMP180 has its matching circuit component."
+      ],
+      "parts": 2,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "weather",
+          "type": "weather",
+          "powered": true,
+          "pins": {
+            "SDA": 36,
+            "SCL": 35
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-12/01-bbb-resin-io-weather",
+      "platform": "beaglebone",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "weather weather has powered, correctly routed pins.",
+        "Source BMP180 has its matching circuit component."
+      ],
+      "parts": 2,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "weather",
+          "type": "weather",
+          "powered": true,
+          "pins": {
+            "SDA": 36,
+            "SCL": 35
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-10/05-kinoma-element-compass",
+      "platform": "kinoma",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "compass compass has powered, correctly routed pins.",
+        "Source HMC5883L has its matching circuit component."
+      ],
+      "parts": 2,
+      "wires": 4,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [
+        {
+          "id": "compass",
+          "type": "compass",
+          "powered": true,
+          "pins": {
+            "SDA": 12,
+            "SCL": 13
+          }
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "path": "chapter-12/02-puck-js-web-led-toggle",
+      "platform": "puck",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap."
+      ],
+      "parts": 1,
+      "wires": 0,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-12/03-puck-js-doorbell",
+      "platform": "puck",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap."
+      ],
+      "parts": 1,
+      "wires": 0,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    },
+    {
+      "path": "chapter-11/01-rpi3-blink-sysfs",
+      "platform": "raspi",
+      "prepared": true,
+      "issues": [],
+      "checks": [
+        "Prepared board matches program platform.",
+        "Every wire endpoint exists in real component pinInfo.",
+        "Scene remains within workbench component/wire limits.",
+        "Components remain within the workspace bounds.",
+        "Estimated visible component/control bounds do not overlap.",
+        "LED light cathode has a reference ground or isolated optocoupler return.",
+        "LED light is wired through a finite series resistor."
+      ],
+      "parts": 3,
+      "wires": 3,
+      "invalidEndpoints": [],
+      "overlappingParts": [],
+      "peripherals": [],
+      "warnings": []
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "project": "chapter-08/03-t2-bmp180",
+    "platform": "tessel",
+    "passed": true,
+    "evidence": "Original BMP180 thermometer change handler logs77F"
+  },
+  {
+    "project": "chapter-11/05-rpi3-bmp180",
+    "platform": "raspi",
+    "passed": true,
+    "evidence": "Original BMP180 thermometer change handler logs77F"
+  },
+  {
+    "project": "chapter-08/05-t2-rover",
+    "platform": "tessel",
+    "passed": true,
+    "evidence": "Original Rover.js receives up/space keyboard commands and configures Tessel A5/B5 PWM"
+  }
+]

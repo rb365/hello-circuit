@@ -1,0 +1,22 @@
+[
+  {
+    "project": "chapter-10/05-kinoma-element-compass",
+    "mode": "virtual-api-adapter",
+    "heading": "123.40",
+    "passed": true
+  },
+  {
+    "project": "chapter-12/02-puck-js-web-led-toggle",
+    "mode": "virtual-api-adapter",
+    "buttonControlsLED": true,
+    "passed": true
+  },
+  {
+    "project": "chapter-12/03-puck-js-doorbell",
+    "mode": "virtual-api-adapter",
+    "buttonSendsChime": true,
+    "ledPulse": true,
+    "originalAudioAssetInlined": true,
+    "passed": true
+  }
+]

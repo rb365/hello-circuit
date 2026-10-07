@@ -1,0 +1,739 @@
+{
+  "verifiedAt": "2026-10-07T08:05:11.747Z",
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Bringing JavaScript and hardware together",
+      "status": "conceptual-only",
+      "summary": "Hardware, JavaScript and toolkit concepts. Build circuits and write your own code in the blank lab; the chapter has no runnable source project.",
+      "exercises": []
+    },
+    {
+      "number": 2,
+      "title": "Embarking on hardware with Arduino",
+      "status": "partial",
+      "summary": "Original Johnny-Five blink and stop programs run on the AVR Uno simulation. The optional Arduino C++ sketch remains linked; editing/uploading C++ is outside this JavaScript runtime.",
+      "exercises": [
+        {
+          "path": "chapter-02/01-arduino-led-blink",
+          "status": "external-workflow",
+          "note": "Optional native Arduino C++ setup sketch. The <1>–<4> inline book annotations must be removed before native compilation. This .ino file cannot execute in the JavaScript editor; the following Johnny-Five blink program demonstrates the same LED behavior."
+        },
+        {
+          "path": "chapter-02/02-hello-world-johnny-five",
+          "status": "runtime-checked",
+          "note": "Pin 13 changes HIGH and LOW after board ready. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-02/03-hello-world-stop",
+          "status": "runtime-checked",
+          "note": "Ten callbacks observed; no extra callback after stopping. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "How to build circuits",
+      "status": "model-checked",
+      "summary": "Breadboard connections, DC resistance, voltage/current measurements, and series/parallel circuits have circuit models. Transients, component damage and every real-world electrical effect are outside the model.",
+      "exercises": []
+    },
+    {
+      "number": 4,
+      "title": "Sensors and input",
+      "status": "partial",
+      "summary": "Original photoresistor, TMP36, threshold, interactive console and push-button programs have browser execution checks. Circuit input controls support working along with the book.",
+      "exercises": [
+        {
+          "path": "chapter-04/01-photoresistor",
+          "status": "runtime-checked",
+          "note": "Analog values 300 and 700 reach exact Sensor data/change code. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-04/02-photoresistor-threshold",
+          "status": "runtime-checked",
+          "note": "Analog values 300 and 700 reach exact Sensor data/change code. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-04/03-temperature",
+          "status": "runtime-checked",
+          "note": "ADC value 154 gives about 25 °C; REPL property checked where required. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-04/04-temperature-repl",
+          "status": "runtime-checked",
+          "note": "ADC value 154 gives about 25 °C; REPL property checked where required. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-04/05-button",
+          "status": "runtime-checked",
+          "note": "Active-high D2 press invokes original down handler. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Output: making things happen",
+      "status": "partial",
+      "summary": "Original LED, brightness animation, nightlight, weather fixture and LCD timer programs have browser checks. The retired Dark Sky request uses explicitly labelled sample data. Physical-button00:01 countdown, DONE display and piezo tone are checked. Each prepared circuit still requires its own visual review.",
+      "exercises": [
+        {
+          "path": "chapter-05/01-experiment-led",
+          "status": "runtime-checked",
+          "note": "Injected LED1 D2 on and LED2 D3 brightness(128) produce real pin signals. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-05/02-animate-led",
+          "status": "runtime-checked",
+          "note": "Original Animation generates varying D3 PWM. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-05/03-timer-led-simple",
+          "status": "runtime-checked",
+          "note": "Original 10-second timeout begins real PWM pulse. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-05/04-nightlight",
+          "status": "runtime-checked",
+          "note": "Original calibration/scale/bitwise code lights D3 after bright-to-dark input. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-05/05-weatherball",
+          "status": "runtime-checked",
+          "note": "Explicit retired-DarkSky fixture produces red RGB PWM. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-05/06-timer-lcd",
+          "status": "runtime-checked",
+          "note": "Original physical buttons select 00:01 and Go reaches DONE; pause works; completion LED6 pulses. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-05/07-timer-lcd-piezo",
+          "status": "runtime-checked",
+          "note": "Original physical buttons select 00:01 and Go reaches DONE; pause works; piezo pin 6 emits a tone. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "title": "Output: making things move",
+      "status": "partial",
+      "summary": "Original motor, servo and multi-file rover programs have browser checks with keyboard input and H-bridge models. These cover commands and signals; complete mechanical movement and every motor wiring detail need review.",
+      "exercises": [
+        {
+          "path": "chapter-06/01-motor-basic",
+          "status": "runtime-checked",
+          "note": "Motor start(128)/stop() via original REPL yields PWM duty about 0.5/0. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-06/02-servo-basic",
+          "status": "runtime-checked",
+          "note": "Original REPL servo.to(120) produces a 120 degree command and real pulses. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-06/03-motor-test",
+          "status": "runtime-checked",
+          "note": "Original two-motor code configures D11/D5 PWM and D12/D4 directions; keyboard up reaches Rover.js. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-06/04-rover",
+          "status": "runtime-checked",
+          "note": "Original two-motor code configures D11/D5 PWM and D12/D4 directions; keyboard up reaches Rover.js. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "title": "Serial communication",
+      "status": "partial",
+      "summary": "Original GPS, compass, I2C LCD and multisensor programs have browser checks through SoftwareSerial/register models. Virtual sensor controls supply readings; electrical timing is approximate.",
+      "exercises": [
+        {
+          "path": "chapter-07/01-gps",
+          "status": "runtime-checked",
+          "note": "Original GPS and REPL observe latitude 37.7749 through real SoftwareSerial. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-07/02-compass",
+          "status": "runtime-checked",
+          "note": "Original compass change handler logs easterly bearing after a 90 degree device input. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-07/03-compass-lcd",
+          "status": "runtime-checked",
+          "note": "Original compass/LCD project displays declination-corrected 76 degrees. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        },
+        {
+          "path": "chapter-07/04-multi-sensor",
+          "status": "runtime-checked",
+          "note": "Original multisensor source displays 77 °F and pressure then switches to heading on shake. Program execution checked in a real browser worker; the prepared circuit still needs visual validation."
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "title": "Projects without wires",
+      "status": "partial",
+      "summary": "Tessel LED, GPIO, weather and rover sources are available through labelled virtual APIs; selected web-server APIs use an in-memory preview. Wireless configuration and native Tessel hardware execution remain external.",
+      "exercises": [
+        {
+          "path": "chapter-08/01-hello-tessel",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Onboard L2 and L3 alternate. Native CPU timing and wireless deployment are not emulated."
+        },
+        {
+          "path": "chapter-08/02-t2-blink",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Add an LED and resistor to Tessel A0 and GND as shown in the book. A0 means digital port A pin 0 here."
+        },
+        {
+          "path": "chapter-08/03-t2-bmp180",
+          "status": "runtime-checked",
+          "note": "Original BMP180 thermometer change handler logs 77 °F Prepared circuit wiring and hardware/native deployment are separate from this program check. The BMP180 reads from a powered circuit on Tessel I2C. Tessel APIs are adapted; native ARM execution is not emulated."
+        },
+        {
+          "path": "chapter-08/04-t2-weather",
+          "status": "runtime-checked",
+          "note": "Original multi-file weather dashboard displays 77.00 F and 1013.25 mbar in the browser iframe through the in-memory server API bridge. Prepared circuit wiring and hardware/native deployment are separate from this program check. The original weather dashboard uses an in-memory Express/HTTP/Socket.IO preview and a wired BMP180. There is no native TCP listener or wireless deployment."
+        },
+        {
+          "path": "chapter-08/05-t2-rover",
+          "status": "runtime-checked",
+          "note": "Original Rover.js receives up/space keyboard commands and configures Tessel A5/B5 PWM Prepared circuit wiring and hardware/native deployment are separate from this program check. Original index.js and Rover.js use Tessel A/B GPIO and keyboard input. Confirm H-bridge wiring and motor direction in the circuit."
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "title": "Building your own thing",
+      "status": "partial",
+      "summary": "Custom multi-file components, APDS9960 registers/FIFO/interrupts and virtual optocoupler/remote channels are available. Original gesture-switch source has browser checks; complete prepared circuit behavior needs review; physical outlets and mains are outside the circuit model.",
+      "exercises": [
+        {
+          "path": "chapter-09/01-prototype-switch",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Use turnOn() and turnOff() in the interactive console. GPIO pulses are checked; connect the optocoupler signal model to inspect isolated output. Physical remote outlets and mains behavior are outside this circuit model."
+        },
+        {
+          "path": "chapter-09/02-remote-switch",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Original RemoteSwitch.js is loaded as a local module. Its named on/off pins use the virtual optocoupler/remote circuit; no real outlet or mains behavior is simulated."
+        },
+        {
+          "path": "chapter-09/03-gesture-i2c-test",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a browser worker against the APDS9960 register/FIFO/interrupt model and virtual GPIO. Prepared circuit wiring and hardware/native deployment are separate from this program check. The original program reads APDS9960 device ID 0xAB from a powered I2C model."
+        },
+        {
+          "path": "chapter-09/04-gesture",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a browser worker against the APDS9960 register/FIFO/interrupt model and virtual GPIO. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original APDS9960.js reads register/FIFO data and active-low A2 interrupts. Direction buttons supply gesture samples to the connected sensor."
+        },
+        {
+          "path": "chapter-09/05-gesture-switches",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a browser worker against the APDS9960 register/FIFO/interrupt model and virtual GPIO. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original gesture driver and RemoteSwitch modules control three virtual remote channels. Check optocoupler pairs and gesture-to-channel behavior; no mains simulation."
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "title": "JavaScript and constrained hardware",
+      "status": "partial",
+      "summary": "Pico LED, BMP180 and graphical LCD programs have browser checks through selected Espruino API adaptations. Kinoma main/browser source has virtual Pins/WebSocket APIs; its GPL-derived compass helper is replaced by an original model. Kinoma browser compass messages are checked. Native interpreter, CPU, SPI timing and network behavior are outside these adaptations.",
+      "exercises": [
+        {
+          "path": "chapter-10/01-pico-led-blink",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Onboard LED1 and LED2 alternate. This provides a selected Espruino API adaptation, not its native JavaScript interpreter."
+        },
+        {
+          "path": "chapter-10/02-pico-bmp180",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire BMP180 power, GND, B6/SCL and B7/SDA. The virtual BMP085 module supplies readings from your connected sensor controls."
+        },
+        {
+          "path": "chapter-10/03-pico-nokia-5110-timer",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire Nokia5110 SCK=B3, MOSI=B5, DC=B13, CE=B14, RST=B15. Press the Pico BTN to start. Selected Graphics calls are adapted; SPI electrical timing is not emulated."
+        },
+        {
+          "path": "chapter-10/04-pico-weather",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire both BMP180 and Nokia5110 as shown in the book. The displayed raster font approximates Espruino vector text."
+        },
+        {
+          "path": "chapter-10/05-kinoma-element-compass",
+          "status": "runtime-checked",
+          "note": "Original Kinoma main.js and HTML page display compass heading 123.40 using the explicit virtual Pins/WebSocket adapter. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original main.js and browser compass page use a narrow ESM adaptation and virtual Pins/WebSocket APIs. The GPL-derived HMC5883L helper is linked separately and replaced by an original heading model; native Kinoma CPU/network behavior is not emulated."
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "title": "Building with Node.js and tiny computers",
+      "status": "partial",
+      "summary": "Pi/BeagleBone GPIO, virtual sysfs files, selected wiring-pi/Raspi/BeagleBone APIs and weather web previews are available. The original shell blink uses a bounded virtual echo/sleep/GPIO-filesystem interpreter. Native Bash, OS/addons and actual TCP networking remain external.",
+      "exercises": [
+        {
+          "path": "chapter-11/01-rpi3-blink-sysfs",
+          "status": "runtime-checked",
+          "note": "Original blink.sh is checked in a browser worker: GPIO4 export, output direction, HIGH/LOW writes with sleep, and unexport use the bounded virtual shell/filesystem. No host shell or native OS is accessed. Original blink.sh uses a bounded virtual shell for echo redirection into the GPIO filesystem and sleep. Wire an LED and a 330 Ω resistor to physical header 7/BCM GPIO4. This runs entirely in the browser; it does not execute Bash or access your computer/Linux kernel."
+        },
+        {
+          "path": "chapter-11/02-rpi3-blink-sysfs-js",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire an LED and resistor to physical header 7 (BCM GPIO4). The file paths refer to a virtual GPIO filesystem, not your computer or a Linux kernel."
+        },
+        {
+          "path": "chapter-11/03-rpi3-blink-wiring-pi",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire an LED and resistor to physical header 7. The wiring-pi module here is a virtual addon; wiringPi 7 maps to BCM4."
+        },
+        {
+          "path": "chapter-11/04-rpi3-blink-j5",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire an LED and resistor to physical header 7. Johnny-Five drives a virtual Raspi IO adapter. Numeric 7 is a wiringPi pin number."
+        },
+        {
+          "path": "chapter-11/05-rpi3-bmp180",
+          "status": "runtime-checked",
+          "note": "Original BMP180 thermometer change handler logs 77 °F Prepared circuit wiring and hardware/native deployment are separate from this program check. A genuine Johnny-Five BMP180 driver reads a powered I2C device through the virtual Raspi IO adapter. Native Linux is not emulated."
+        },
+        {
+          "path": "chapter-11/06-rpi3-weather",
+          "status": "runtime-checked",
+          "note": "Original multi-file weather dashboard displays 77.00 F and 1013.25 mbar in the browser iframe through the in-memory server API bridge. Prepared circuit wiring and hardware/native deployment are separate from this program check. The original dashboard runs with virtual Raspi IO and selected in-memory server APIs. No native network listener is opened."
+        },
+        {
+          "path": "chapter-11/07-arduino-uno-weather",
+          "status": "runtime-checked",
+          "note": "Original multi-file weather dashboard displays 77.00 F and 1013.25 mbar in the browser iframe through the in-memory server API bridge. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original Johnny-Five runs on the AVR Uno simulation, with the web dashboard through selected in-memory server APIs. No native TCP server is opened."
+        },
+        {
+          "path": "chapter-11/08-bbb-blink-j5",
+          "status": "runtime-checked",
+          "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. The BeagleBone default onboard LED is USR3. GPIO APIs are adapted; the native operating system is not emulated."
+        },
+        {
+          "path": "chapter-11/09-bbb-weather",
+          "status": "runtime-checked",
+          "note": "Original multi-file weather dashboard displays 77.00 F and 1013.25 mbar in the browser iframe through the in-memory server API bridge. Prepared circuit wiring and hardware/native deployment are separate from this program check. The original dashboard runs with virtual BeagleBone IO and selected in-memory server APIs. Native Linux and TCP are not emulated."
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "title": "In the cloud, in the browser, and beyond",
+      "status": "partial",
+      "summary": "The cloud weather program has a virtual local-server path; Puck LED/doorbell sources have explicit virtual Bluetooth serial models. Cloud provisioning, Docker deployment, physical Bluetooth pairing and radios remain external. Original Puck web button/doorbell flows, LED pulse, CHIME parsing and bundled audio loading have browser checks; complete prepared wiring remains a separate review.",
+      "exercises": [
+        {
+          "path": "chapter-12/01-bbb-resin-io-weather",
+          "status": "runtime-checked",
+          "note": "Original multi-file weather dashboard displays 77.00 F and 1013.25 mbar in the browser iframe through the in-memory server API bridge. Prepared circuit wiring and hardware/native deployment are separate from this program check. The weather program and web interface can run locally with virtual APIs. Resin/balena account, Docker deployment, device provisioning and cloud management are outside this browser model."
+        },
+        {
+          "path": "chapter-12/02-puck-js-web-led-toggle",
+          "status": "runtime-checked",
+          "note": "Original Puck browser ON/OFF buttons control virtual LED1 through the explicit connection shim. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original browser buttons send LED1.set/reset through an explicit virtual Puck connection. This demonstrates the JavaScript workflow without a Bluetooth radio, physical pairing or native Puck interpreter."
+        },
+        {
+          "path": "chapter-12/03-puck-js-doorbell",
+          "status": "runtime-checked",
+          "note": "Original doorbell HTML and PuckChime.js receive virtual BTN/CHIME text, emit a 250 ms LED1 pulse and load the inlined original audio asset in a real browser. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original PuckChime.js sends reset/button-watch code through a virtual Puck connection. BTN rising events emit CHIME text and LED flashes. Browser sound uses the bundled example audio; no Bluetooth radio or pairing is emulated."
+        }
+      ]
+    }
+  ],
+  "programs": [
+    {
+      "sourcePath": "chapter-02/02-hello-world-johnny-five",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Pin 13 changes HIGH and LOW after board ready. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-02/03-hello-world-stop",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Ten callbacks observed; no extra callback after stopping. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-04/01-photoresistor",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Analog values 300 and 700 reach exact Sensor data/change code. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-04/02-photoresistor-threshold",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Analog values 300 and 700 reach exact Sensor data/change code. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-04/03-temperature",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "ADC value 154 gives about 25 °C; REPL property checked where required. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-04/04-temperature-repl",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "ADC value 154 gives about 25 °C; REPL property checked where required. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-04/05-button",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Active-high D2 press invokes original down handler. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-05/01-experiment-led",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Injected LED1 D2 on and LED2 D3 brightness(128) produce real pin signals. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js"
+    },
+    {
+      "sourcePath": "chapter-05/02-animate-led",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original Animation generates varying D3 PWM. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js"
+    },
+    {
+      "sourcePath": "chapter-05/03-timer-led-simple",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original 10-second timeout begins real PWM pulse. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js"
+    },
+    {
+      "sourcePath": "chapter-05/04-nightlight",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original calibration/scale/bitwise code lights D3 after bright-to-dark input. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-05/05-weatherball",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Explicit retired-DarkSky fixture produces red RGB PWM. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-05/06-timer-lcd",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original physical buttons select 00:01 and Go reaches DONE; pause works; completion LED6 pulses. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-05/07-timer-lcd-piezo",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original physical buttons select 00:01 and Go reaches DONE; pause works; piezo pin 6 emits a tone. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-06/01-motor-basic",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Motor start(128)/stop() via original REPL yields PWM duty about 0.5/0. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js"
+    },
+    {
+      "sourcePath": "chapter-06/02-servo-basic",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original REPL servo.to(120) produces a 120 degree command and real pulses. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-06/03-motor-test",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original two-motor code configures D11/D5 PWM and D12/D4 directions; keyboard up reaches Rover.js. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-06/04-rover",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original two-motor code configures D11/D5 PWM and D12/D4 directions; keyboard up reaches Rover.js. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-07/01-gps",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original GPS and REPL observe latitude 37.7749 through real SoftwareSerial. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-07/02-compass",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original compass change handler logs easterly bearing after a 90 degree device input. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-07/03-compass-lcd",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original compass/LCD project displays declination-corrected 76 degrees. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-07/04-multi-sensor",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original multisensor source displays 77 °F and pressure then switches to heading on shake. Program execution checked in a real browser worker; the prepared circuit still needs visual validation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-08/01-hello-tessel",
+      "platform": "tessel",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Onboard L2 and L3 alternate. Native CPU timing and wireless deployment are not emulated.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-08/02-t2-blink",
+      "platform": "tessel",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Add an LED and resistor to Tessel A0 and GND as shown in the book. A0 means digital port A pin 0 here.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-09/01-prototype-switch",
+      "platform": "tessel",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Use turnOn() and turnOff() in the interactive console. GPIO pulses are checked; connect the optocoupler signal model to inspect isolated output. Physical remote outlets and mains behavior are outside this circuit model.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-10/01-pico-led-blink",
+      "platform": "pico",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Onboard LED1 and LED2 alternate. This provides a selected Espruino API adaptation, not its native JavaScript interpreter.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-10/02-pico-bmp180",
+      "platform": "pico",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire BMP180 power, GND, B6/SCL and B7/SDA. The virtual BMP085 module supplies readings from your connected sensor controls.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-10/03-pico-nokia-5110-timer",
+      "platform": "pico",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire Nokia5110 SCK=B3, MOSI=B5, DC=B13, CE=B14, RST=B15. Press the Pico BTN to start. Selected Graphics calls are adapted; SPI electrical timing is not emulated.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-10/04-pico-weather",
+      "platform": "pico",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire both BMP180 and Nokia5110 as shown in the book. The displayed raster font approximates Espruino vector text.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-11/02-rpi3-blink-sysfs-js",
+      "platform": "raspi",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire an LED and resistor to physical header 7 (BCM GPIO4). The file paths refer to a virtual GPIO filesystem, not your computer or a Linux kernel.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-11/03-rpi3-blink-wiring-pi",
+      "platform": "raspi",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire an LED and resistor to physical header 7. The wiring-pi module here is a virtual addon; wiringPi 7 maps to BCM4.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-11/04-rpi3-blink-j5",
+      "platform": "raspi",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Wire an LED and resistor to physical header 7. Johnny-Five drives a virtual Raspi IO adapter. Numeric 7 is a wiringPi pin number.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-11/08-bbb-blink-j5",
+      "platform": "beaglebone",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. The BeagleBone default onboard LED is USR3. GPIO APIs are adapted; the native operating system is not emulated.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-08/03-t2-bmp180",
+      "platform": "tessel",
+      "status": "runtime-checked",
+      "note": "Original BMP180 thermometer change handler logs 77 °F Prepared circuit wiring and hardware/native deployment are separate from this program check. The BMP180 reads from a powered circuit on Tessel I2C. Tessel APIs are adapted; native ARM execution is not emulated.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-08/04-t2-weather",
+      "platform": "tessel",
+      "status": "runtime-checked",
+      "note": "Original multi-file weather dashboard displays 77.00 F and 1013.25 mbar in the browser iframe through the in-memory server API bridge. Prepared circuit wiring and hardware/native deployment are separate from this program check. The original weather dashboard uses an in-memory Express/HTTP/Socket.IO preview and a wired BMP180. There is no native TCP listener or wireless deployment.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-08/05-t2-rover",
+      "platform": "tessel",
+      "status": "runtime-checked",
+      "note": "Original Rover.js receives up/space keyboard commands and configures Tessel A5/B5 PWM Prepared circuit wiring and hardware/native deployment are separate from this program check. Original index.js and Rover.js use Tessel A/B GPIO and keyboard input. Confirm H-bridge wiring and motor direction in the circuit.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-09/02-remote-switch",
+      "platform": "tessel",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a real browser worker with the labelled virtual platform APIs. Circuit wiring and complete lesson behavior need separate validation. Original RemoteSwitch.js is loaded as a local module. Its named on/off pins use the virtual optocoupler/remote circuit; no real outlet or mains behavior is simulated.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-09/03-gesture-i2c-test",
+      "platform": "tessel",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a browser worker against the APDS9960 register/FIFO/interrupt model and virtual GPIO. Prepared circuit wiring and hardware/native deployment are separate from this program check. The original program reads APDS9960 device ID 0xAB from a powered I2C model.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-09/04-gesture",
+      "platform": "tessel",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a browser worker against the APDS9960 register/FIFO/interrupt model and virtual GPIO. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original APDS9960.js reads register/FIFO data and active-low A2 interrupts. Direction buttons supply gesture samples to the connected sensor.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-09/05-gesture-switches",
+      "platform": "tessel",
+      "status": "runtime-checked",
+      "note": "Exact original program checked in a browser worker against the APDS9960 register/FIFO/interrupt model and virtual GPIO. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original gesture driver and RemoteSwitch modules control three virtual remote channels. Check optocoupler pairs and gesture-to-channel behavior; no mains simulation.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-11/05-rpi3-bmp180",
+      "platform": "raspi",
+      "status": "runtime-checked",
+      "note": "Original BMP180 thermometer change handler logs 77 °F Prepared circuit wiring and hardware/native deployment are separate from this program check. A genuine Johnny-Five BMP180 driver reads a powered I2C device through the virtual Raspi IO adapter. Native Linux is not emulated.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-11/06-rpi3-weather",
+      "platform": "raspi",
+      "status": "runtime-checked",
+      "note": "Original multi-file weather dashboard displays 77.00 F and 1013.25 mbar in the browser iframe through the in-memory server API bridge. Prepared circuit wiring and hardware/native deployment are separate from this program check. The original dashboard runs with virtual Raspi IO and selected in-memory server APIs. No native network listener is opened.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-11/07-arduino-uno-weather",
+      "platform": "uno",
+      "status": "runtime-checked",
+      "note": "Original multi-file weather dashboard displays 77.00 F and 1013.25 mbar in the browser iframe through the in-memory server API bridge. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original Johnny-Five runs on the AVR Uno simulation, with the web dashboard through selected in-memory server APIs. No native TCP server is opened.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-11/09-bbb-weather",
+      "platform": "beaglebone",
+      "status": "runtime-checked",
+      "note": "Original multi-file weather dashboard displays 77.00 F and 1013.25 mbar in the browser iframe through the in-memory server API bridge. Prepared circuit wiring and hardware/native deployment are separate from this program check. The original dashboard runs with virtual BeagleBone IO and selected in-memory server APIs. Native Linux and TCP are not emulated.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-12/01-bbb-resin-io-weather",
+      "platform": "beaglebone",
+      "status": "runtime-checked",
+      "note": "Original multi-file weather dashboard displays 77.00 F and 1013.25 mbar in the browser iframe through the in-memory server API bridge. Prepared circuit wiring and hardware/native deployment are separate from this program check. The weather program and web interface can run locally with virtual APIs. Resin/balena account, Docker deployment, device provisioning and cloud management are outside this browser model.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-10/05-kinoma-element-compass",
+      "platform": "kinoma",
+      "status": "runtime-checked",
+      "note": "Original Kinoma main.js and HTML page display compass heading 123.40 using the explicit virtual Pins/WebSocket adapter. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original main.js and browser compass page use a narrow ESM adaptation and virtual Pins/WebSocket APIs. The GPL-derived HMC5883L helper is linked separately and replaced by an original heading model; native Kinoma CPU/network behavior is not emulated.",
+      "entry": "main.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-12/02-puck-js-web-led-toggle",
+      "platform": "puck",
+      "status": "runtime-checked",
+      "note": "Original Puck browser ON/OFF buttons control virtual LED1 through the explicit connection shim. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original browser buttons send LED1.set/reset through an explicit virtual Puck connection. This demonstrates the JavaScript workflow without a Bluetooth radio, physical pairing or native Puck interpreter.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-12/03-puck-js-doorbell",
+      "platform": "puck",
+      "status": "runtime-checked",
+      "note": "Original doorbell HTML and PuckChime.js receive virtual BTN/CHIME text, emit a 250 ms LED1 pulse and load the inlined original audio asset in a real browser. Prepared circuit wiring and hardware/native deployment are separate from this program check. Original PuckChime.js sends reset/button-watch code through a virtual Puck connection. BTN rising events emit CHIME text and LED flashes. Browser sound uses the bundled example audio; no Bluetooth radio or pairing is emulated.",
+      "entry": "index.js",
+      "sceneStatus": "prepared-needs-browser-check"
+    },
+    {
+      "sourcePath": "chapter-11/01-rpi3-blink-sysfs",
+      "platform": "raspi",
+      "status": "runtime-checked",
+      "note": "Original blink.sh is checked in a browser worker: GPIO4 export, output direction, HIGH/LOW writes with sleep, and unexport use the bounded virtual shell/filesystem. No host shell or native OS is accessed. Original blink.sh uses a bounded virtual shell for echo redirection into the GPIO filesystem and sleep. Wire an LED and a 330 Ω resistor to physical header 7/BCM GPIO4. This runs entirely in the browser; it does not execute Bash or access your computer/Linux kernel.",
+      "entry": "blink.sh",
+      "sceneStatus": "prepared-needs-browser-check"
+    }
+  ]
+}

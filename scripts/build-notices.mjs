@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {bookSourceLicense} from '../src/book.mjs';
 const packages=new Map();
 for(const file of JSON.parse(fs.readFileSync('node_modules/.lab-frontend-inputs.json','utf8'))){
   if(!file.startsWith('node_modules/'))continue;
@@ -20,6 +21,7 @@ for(const[name,{directory,pkg}]of [...packages].sort()){
     const filename=path.join(directory,file);if(fs.statSync(filename).isFile())notices+='\n'+file+'\n'+fs.readFileSync(filename,'utf8');
   }
 }
+notices+='\nOfficial JavaScript on Things example source\n'+bookSourceLicense+'\n';
 notices+='\n'+fs.readFileSync('dist/runtime-licenses.txt','utf8');
 fs.writeFileSync('dist/THIRD_PARTY_NOTICES.txt',notices);
 fs.copyFileSync('dist/THIRD_PARTY_NOTICES.txt','THIRD_PARTY_NOTICES.txt');

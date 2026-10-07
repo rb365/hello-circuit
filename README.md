@@ -1,62 +1,57 @@
 # Little Circuit Lab
 
-Write Johnny-Five JavaScript and experiment with a virtual Arduino Uno in one browser page. Code and circuit appear side by side. No physical board is required.
+A browser workbench for following **JavaScript on Things** without a physical board. Start with an unwired Arduino Uno and an empty code editor, choose components, connect pins, and write your own program. Examples are optional and live in **Help & book companion**.
 
-The app includes six original experiments: blinking an LED, counting blinks, reading a button, fading an LED, reading a dial, and moving a servo. You can edit the JavaScript, add parts, drag components, and connect their pins.
+The workbench can run locally or as a hosted static website. The same browser runtime is used in both.
 
-## Try it
+## Open locally
 
-1. Open the published lab in a recent browser.
-2. Choose an experiment and click **Run code**.
-3. Edit the code, then run it again. Press **Stop** to terminate the program and reset the virtual board.
-4. Click two gold pins to connect them. Click a wire to remove it. Drag a component by its name.
+On this Mac, double-click **Start Local Lab.command**. It opens the workbench at `http://127.0.0.1:4178/`. Keep its terminal window open while using the lab; Ctrl+C stops the local server.
 
-**Share project** shows a link containing the current code, components, and connections. Opening that link displays the project and waits for the recipient to click Run. **Download project** and **Open project** save and restore JSON project files. The current project is also saved in your browser on that device.
+Alternatively, run `npm start` from the project directory. The prebuilt `dist` folder needs only a static web server. Learners do not need Node.js, npm, a serial connection, or a compilation service to use the browser lab after its assets load. The local launcher uses Python 3, already available on this development machine.
 
-## How it works
+## Work alongside the book
 
-The actual Johnny-Five library runs in a Web Worker with a small browser adapter. Its Firmata messages travel through an in-memory serial connection to an ATmega328P emulated by AVR8js. The emulated processor runs precompiled StandardFirmata firmware. Pin states drive Wokwi's visual components.
+1. Choose the book’s board. Arduino Uno is the default; the other boards are labelled virtual API models.
+2. Add parts from the component menu. Drag a part by its name and click two gold pins to make a wire. Select a component to change values or see measurements; select a wire and use Remove to delete it.
+3. Write the code. Add local files such as `Rover.js`, and choose the program’s entry file. HTML/CSS, JSON and the selected virtual-shell exercise are also editable.
+4. Run the program. The interactive console evaluates JavaScript for objects exposed with `board.repl.inject`. Control keys send arrow/space/Ctrl+C events to rover programs. The virtual Pi/BeagleBone console also has a bounded GPIO shell.
+5. Experiment. Change light, temperature, pressure, acceleration, GPS position or gesture controls. LCDs, motors, LEDs and the web-page preview respond to the wired circuit.
 
-The Worker keeps the JavaScript execution separate from the page interface. It is terminated when you press Stop. This is a JavaScript learning environment; it does not provide a Node.js terminal, native modules, or arbitrary npm package installation.
+Download/Open save complete JSON projects. Share includes files, assets, components and wiring in a link. Projects are saved on this device, and imported/shared programs wait for Run. Loading an example or changing the board can be undone. A first visit opens the empty workbench, rather than a prepared lesson.
 
-AVR8js is also the Arduino processor engine used by Velxio. This lab has its own interface and circuit model; it does not embed the full Velxio application.
+## Book coverage and limits
 
-## Current scope
+The guide inventories all **12 chapters and 50 official source projects**. Browser execution checks cover **49 projects: 48 JavaScript projects and the GPIO shell script**. The 22 Arduino JavaScript projects use actual Johnny-Five with emulated AVR/Firmata. Other board, network and Bluetooth programs use explicit browser API adapters.
 
-- One virtual Arduino Uno.
-- LEDs and resistors, buttons, potentiometers, and servos.
-- Johnny-Five board initialization, digital input/output, PWM brightness, analog readings, and servo commands.
-- Local execution after the app's assets load; no compilation server or board connection is needed.
+**Program checked** means the source and an observable result passed the recorded browser checks. It does not mean every physical, installation, radio or deployment instruction in the chapter is reproduced. All 49 optional prepared circuits passed 475 model checks for endpoints, source pins, power/bus routing, resistor/driver wiring and layout bounds. These are separate from the program checks; the reader can always build their own circuit from the book. See [BOOK-COVERAGE.md](BOOK-COVERAGE.md) and Help for details per exercise.
 
-The circuit model follows connections and pin behavior. It does not calculate electrical current, resistor power, component damage, or every physical effect. A resistor is treated as a conductive connection for these introductory experiments. Other Johnny-Five devices may require additional firmware or component models.
+The introductory Arduino C++ `.ino` project needs annotation removal and a C++ compiler; it is linked as an external setup workflow. The original repository includes `<1>`–`<4>` book callouts that are not valid C++. This JavaScript lab does not provide arbitrary Arduino C++ compilation.
 
-The examples were written for this project. [JavaScript on Things, chapter 2](https://livebook.manning.com/book/javascript-on-things/chapter-2) is linked as a reading companion. The lab is independent and is not affiliated with Manning, Arduino, Wokwi, or Velxio.
+Tessel, Pico, Pi, BeagleBone, Kinoma and Puck are selected **API models**, not CPU/OS/radio emulators. The Pi/BeagleBone shell models the book’s GPIO files and commands; it cannot access the host filesystem or install packages. Web previews simulate the selected Express/HTTP/Socket.IO or WebSocket APIs inside a sandboxed iframe; they open no TCP listener. Puck connections are virtual and use no physical Bluetooth chooser. Actual cloud deployment, board provisioning, native setup and radio pairing remain external book workflows.
 
-## Local hosting
+The book’s Dark Sky service has retired. Its Weatherball example uses an explicitly labelled sample forecast. Browser `request` uses fetch for other URLs, subject to CORS. Kinoma’s original GPL-derived helper is not bundled; its selected behavior is supplied by an original, labelled browser model.
 
-Serve the `dist` directory with a local static web server; opening `index.html` directly from the filesystem will not load its Worker correctly. For example, from the project directory:
+The electrical model calculates introductory DC resistor networks, breadboard connectivity, voltage dividers, LED current, MOSFET/H-bridge signals and selected optocoupler behavior. It does not model damage, calibrated tolerances, inductive/capacitive transients, mains electricity or an RF outlet’s radio link. It is not an electrical safety tool or a general Node.js terminal.
 
-```sh
-python3 -m http.server 4178 --bind 127.0.0.1 --directory dist
-```
+## Runtime
 
-Then open `http://localhost:4178`. Clipboard sharing requires a secure browser context such as HTTPS or localhost. Use project files when clipboard permission is unavailable.
+Uno: Johnny-Five 2.1.0 → Firmata-IO 2.3.0 → in-memory serial → AVR8js 0.21.1 running StandardFirmataPlus 2.5.9 on an ATmega328P. Real GPIO, PWM, ADC, USART/SoftwareSerial and TWI drive original peripheral models. Wokwi elements and original SVG models render components. Code runs in a fresh worker; Stop terminates it, including a stuck program.
 
-## Credits and licenses
+Other platforms preserve selected source APIs and their native pin maps. Compatibility wrappers handle two book-era Johnny-Five constructor patterns. Espruino graphics use an original approximate font; Kinoma ESM and its `Set.remove` typo receive narrow documented adaptations. See [the runtime documentation](src/runtime/README.md) for the message protocol and limits.
 
-The original application code is MIT licensed. Bundled dependencies and firmware retain their own licenses. See `THIRD_PARTY_NOTICES.txt` and the included firmware source and license files before redistributing. The matching firmware sources are publicly downloadable in `dist/firmware/source.tar.gz`.
+## Validation
 
-- [Johnny-Five](https://github.com/rwaldron/johnny-five)
-- [Firmata JavaScript](https://github.com/firmata/firmata.js)
-- [StandardFirmata](https://github.com/firmata/arduino)
-- [AVR8js](https://github.com/wokwi/avr8js)
-- [Wokwi elements](https://github.com/wokwi/wokwi-elements)
-- [CodeMirror](https://codemirror.net/)
+Recorded checks include the 22 original Uno programs; full LCD countdown/DONE/piezo; rover local modules and keys; GPS; simultaneous I²C sensor/LCD/shake behavior; native board pin maps and APIs; APDS plugins; five original weather pages; Kinoma compass page; Puck toggle/doorbell/audio; and the original GPIO shell script. The model suite adds 83 circuit assertions, 23 SVG/pin checks, 61 shell assertions and 475 prepared-circuit checks.
 
-## Rebuild
+The workbench was also checked through its visible controls: blank startup, adding and wiring an LED/resistor, writing code, REPL on/off, multi-file modules, book importing, sensor editing and page-preview messages. Coverage data separates source execution checks from circuit/template review.
 
-Install a recent Node.js release, then run `npm ci --ignore-scripts` and `npm run build`. The app itself needs only a static web server. Node.js is build tooling, never a requirement for learners.
+## Rebuild and redistribute
 
-The firmware is already compiled and included. To rebuild or replace it, see `dist/firmware/BUILD.md` and the matching source archive. The firmware source licenses permit modification and redistribution under their terms.
+Install a recent Node.js release, then run `npm ci --ignore-scripts` and `npm run build`. This builds the static frontend, worker and notices; it never publishes. `python3 scripts/package-source.py` packages editable source and prebuilt assets into `dist/source.zip`.
 
-The project is MIT licensed for its original code. Download the source ZIP from the public lab’s About dialog to fork or host it yourself.
+Original app code is MIT licensed. The author’s example code and sound retain their MIT notice (Copyright 2017 Lyza Gardner). The book’s chapter text and illustrations are not included. Firmware and dependencies retain their own licenses: see `THIRD_PARTY_NOTICES.txt`, `dist/firmware/BUILD.md` and `dist/firmware/source.tar.gz`. Matching firmware source and build flags are included.
+
+Sources: [Manning’s book](https://www.manning.com/books/javascript-on-things), [official example repository](https://github.com/lyzadanger/javascript-on-things) pinned to `6f7e825c05933d5658b58c622351d4f9c43d61d5`, [Johnny-Five](https://github.com/rwaldron/johnny-five), [Firmata](https://github.com/firmata/arduino), [AVR8js](https://github.com/wokwi/avr8js), [Wokwi elements](https://github.com/wokwi/wokwi-elements), [CodeMirror](https://codemirror.net/).
+
+The lab is independent and not affiliated with Manning, Arduino, Wokwi or Velxio.

@@ -1,0 +1,5 @@
+{
+  "originalPiBlinkShell": true,
+  "piCommandsLoopStop": true,
+  "bbbNativeGpio66": true
+}

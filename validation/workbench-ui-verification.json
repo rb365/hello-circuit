@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-10-07T08:45:57.328Z",
+  "browser": "Codex in-app browser",
+  "manualChecks": [
+    "Blank project with unwired Uno and empty index.js persists after reload.",
+    "Own LED/resistor circuit built through visible controls; own Johnny-Five code and REPL on/off tested.",
+    "Local multi-file module added and executed.",
+    "Book code/prepared scene import through Help.",
+    "Weather input applies while typing and updates the original web preview.",
+    "Timer push-toggle centers hit BUTTON after reserving native label height.",
+    "Timer press produces live GPIO, completes countdown and LCD DONE output.",
+    "Focus keeps circuit viewport scrollTop and scrollLeft at zero.",
+    "Original blink.sh imports with entry blink.sh and shell console, then reaches virtual Pi ready.",
+    "390 by 844 mobile workbench inspected; viewport override reset."
+  ],
+  "lcdCompletion": "01:00    DONE!  \n                ",
+  "scope": "Selected visible flows only; all-program execution and circuit-model checks have separate reports."
+}

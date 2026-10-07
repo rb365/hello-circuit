@@ -1,0 +1,37 @@
+[
+  {
+    "project": "chapter-08/04-t2-weather",
+    "platform": "tessel",
+    "temperatureF": "77.00",
+    "pressureMbar": "1013.25",
+    "passed": true
+  },
+  {
+    "project": "chapter-11/06-rpi3-weather",
+    "platform": "raspi",
+    "temperatureF": "77.00",
+    "pressureMbar": "1013.25",
+    "passed": true
+  },
+  {
+    "project": "chapter-11/07-arduino-uno-weather",
+    "platform": "uno",
+    "temperatureF": "77.00",
+    "pressureMbar": "1013.25",
+    "passed": true
+  },
+  {
+    "project": "chapter-11/09-bbb-weather",
+    "platform": "beaglebone",
+    "temperatureF": "77.00",
+    "pressureMbar": "1013.25",
+    "passed": true
+  },
+  {
+    "project": "chapter-12/01-bbb-resin-io-weather",
+    "platform": "beaglebone",
+    "temperatureF": "77.00",
+    "pressureMbar": "1013.25",
+    "passed": true
+  }
+]

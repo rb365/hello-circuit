@@ -1,0 +1,18 @@
+[
+  {
+    "project": "chapter-08/04-t2-weather",
+    "platform": "tessel",
+    "initialTemperatureF": "77.00",
+    "updatedTemperatureF": "86.00",
+    "updatedPressureMbar": "980.00",
+    "passed": true
+  },
+  {
+    "project": "chapter-11/07-arduino-uno-weather",
+    "platform": "uno",
+    "initialTemperatureF": "77.00",
+    "updatedTemperatureF": "86.00",
+    "updatedPressureMbar": "980.00",
+    "passed": true
+  }
+]

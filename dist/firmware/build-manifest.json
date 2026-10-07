@@ -1,14 +1,18 @@
 {
-  "sketch": "StandardFirmata",
+  "sketch": "StandardFirmataPlus",
   "board": "arduino:avr:uno",
   "arduinoCLI": "1.5.1",
   "arduinoAVR": "1.8.6",
   "avrGcc": "7.3.0-atmel3.6.1-arduino7",
   "Firmata": "2.5.9",
   "Servo": "1.2.2",
-  "firmwareSha256": "521371e2f0f6fbc18a7db0a2e7aa49768103d202dc3805ab0bb3971d42f99fe2",
+  "firmwareSha256": "23a039923e874979f48630499ed365c246af2975012840a8127869627a79159e",
   "sourceModified": false,
-  "independentRebuildMatches": true,
-  "flashBytes": 13212,
-  "ramBytes": 1153
+  "independentRebuildMatches": null,
+  "flashBytes": 15828,
+  "ramBytes": 1522,
+  "buildProperties": {
+    "build.extra_flags": "-DSERIAL_RX_BUFFER_SIZE=256"
+  },
+  "independentRebuildStatus": "Not rechecked for the Plus build with the larger serial buffer"
 }

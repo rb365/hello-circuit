@@ -1,0 +1,17 @@
+[
+  {
+    "project": "chapter-09/03-gesture-i2c-test",
+    "platform": "tessel",
+    "passed": true
+  },
+  {
+    "project": "chapter-09/04-gesture",
+    "platform": "tessel",
+    "passed": true
+  },
+  {
+    "project": "chapter-09/05-gesture-switches",
+    "platform": "tessel",
+    "passed": true
+  }
+]

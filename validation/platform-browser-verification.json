@@ -1,0 +1,62 @@
+[
+  {
+    "project": "chapter-08/01-hello-tessel",
+    "platform": "tessel",
+    "passed": true
+  },
+  {
+    "project": "chapter-08/02-t2-blink",
+    "platform": "tessel",
+    "passed": true
+  },
+  {
+    "project": "chapter-09/01-prototype-switch",
+    "platform": "tessel",
+    "passed": true
+  },
+  {
+    "project": "chapter-09/02-remote-switch",
+    "platform": "tessel",
+    "passed": true
+  },
+  {
+    "project": "chapter-11/04-rpi3-blink-j5",
+    "platform": "raspi",
+    "passed": true
+  },
+  {
+    "project": "chapter-11/08-bbb-blink-j5",
+    "platform": "beaglebone",
+    "passed": true
+  },
+  {
+    "project": "chapter-11/02-rpi3-blink-sysfs-js",
+    "platform": "raspi",
+    "passed": true
+  },
+  {
+    "project": "chapter-11/03-rpi3-blink-wiring-pi",
+    "platform": "raspi",
+    "passed": true
+  },
+  {
+    "project": "chapter-10/01-pico-led-blink",
+    "platform": "pico",
+    "passed": true
+  },
+  {
+    "project": "chapter-10/02-pico-bmp180",
+    "platform": "pico",
+    "passed": true
+  },
+  {
+    "project": "chapter-10/03-pico-nokia-5110-timer",
+    "platform": "pico",
+    "passed": true
+  },
+  {
+    "project": "chapter-10/04-pico-weather",
+    "platform": "pico",
+    "passed": true
+  }
+]

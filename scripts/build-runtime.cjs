@@ -5,13 +5,16 @@ const esbuild = require('esbuild');
 const root = path.resolve(__dirname,'..');
 const files = new Set();
 const entry = path.join(root,'src/runtime/runtime.worker.source.js');
-const build = browserify(entry);
+const build = browserify(entry,{insertGlobalVars:{
+  setImmediate:()=> 'globalThis.setImmediate',
+  clearImmediate:()=> 'globalThis.clearImmediate'
+}});
 for (const module of ['serialport','browser-serialport','firmata','repl']) build.ignore(module);
 build.on('file',file=>files.add(file));
 build.bundle(async (error, output) => {
   if (error) throw error;
   const result=await esbuild.transform(output.toString(),{minify:true,target:'es2020',legalComments:'eof'});
-  fs.mkdirSync(path.join(root,'dist'),{recursive:true});
+  fs.mkdirSync(path.join(root,'dist/assets'),{recursive:true});
   fs.writeFileSync(path.join(root,'dist/assets/runtime.worker.js'),result.code);
   const packages=new Map();
   for (const file of files) {

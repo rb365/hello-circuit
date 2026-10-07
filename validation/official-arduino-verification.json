@@ -1,0 +1,139 @@
+{
+  "harnessVersion": 2,
+  "verifiedAt": "2026-10-07T07:57:01.365Z",
+  "worker": "/Users/vassiliskarine/Documents/Codex/2026-10-06/can-x20/outputs/little-circuit-lab/dist/assets/runtime.worker.js",
+  "results": [
+    {
+      "path": "chapter-02/02-hello-world-johnny-five",
+      "status": "runtime-checked",
+      "evidence": "Pin13 changes HIGH and LOW after board ready.",
+      "elapsedMs": 627
+    },
+    {
+      "path": "chapter-02/03-hello-world-stop",
+      "status": "runtime-checked",
+      "evidence": "Ten callbacks observed; no extra callback after stopping.",
+      "elapsedMs": 6891
+    },
+    {
+      "path": "chapter-04/01-photoresistor",
+      "status": "runtime-checked",
+      "evidence": "Analog300 and700 reach exact Sensor data/change code.",
+      "elapsedMs": 140
+    },
+    {
+      "path": "chapter-04/02-photoresistor-threshold",
+      "status": "runtime-checked",
+      "evidence": "Analog300 and700 reach exact Sensor data/change code.",
+      "elapsedMs": 150
+    },
+    {
+      "path": "chapter-04/03-temperature",
+      "status": "runtime-checked",
+      "evidence": "ADC154 yields about25C; REPL property checked where required.",
+      "elapsedMs": 117
+    },
+    {
+      "path": "chapter-04/04-temperature-repl",
+      "status": "runtime-checked",
+      "evidence": "ADC154 yields about25C; REPL property checked where required.",
+      "elapsedMs": 388
+    },
+    {
+      "path": "chapter-04/05-button",
+      "status": "runtime-checked",
+      "evidence": "Active-high D2 press invokes original down handler.",
+      "elapsedMs": 433
+    },
+    {
+      "path": "chapter-05/01-experiment-led",
+      "status": "runtime-checked",
+      "evidence": "Injected LED1 D2 on and LED2 D3 brightness128 produce real pin signals.",
+      "elapsedMs": 110
+    },
+    {
+      "path": "chapter-05/02-animate-led",
+      "status": "runtime-checked",
+      "evidence": "Original Animation generates varying D3 PWM.",
+      "elapsedMs": 550
+    },
+    {
+      "path": "chapter-05/04-nightlight",
+      "status": "runtime-checked",
+      "evidence": "Original calibration/scale/bitwise code lights D3 after bright-to-dark input.",
+      "elapsedMs": 1505
+    },
+    {
+      "path": "chapter-05/05-weatherball",
+      "status": "runtime-checked",
+      "evidence": "Explicit retired-DarkSky fixture produces red RGB PWM.",
+      "elapsedMs": 123
+    },
+    {
+      "path": "chapter-05/06-timer-lcd",
+      "status": "runtime-checked",
+      "evidence": "Original physical buttons select00:01 and Go reachesDONE; pause works; completion LED6 pulses.",
+      "elapsedMs": 12999
+    },
+    {
+      "path": "chapter-05/07-timer-lcd-piezo",
+      "status": "runtime-checked",
+      "evidence": "Original physical buttons select00:01 and Go reachesDONE; pause works; piezo pin6 emits a tone.",
+      "elapsedMs": 13001
+    },
+    {
+      "path": "chapter-06/01-motor-basic",
+      "status": "runtime-checked",
+      "evidence": "Motor start128/stop via original REPL yields PWM duty≈.5/0.",
+      "elapsedMs": 116
+    },
+    {
+      "path": "chapter-06/02-servo-basic",
+      "status": "runtime-checked",
+      "evidence": "Original REPL servo.to120 produces commanded120deg and real pulses.",
+      "elapsedMs": 113
+    },
+    {
+      "path": "chapter-06/03-motor-test",
+      "status": "runtime-checked",
+      "evidence": "Original two-motor code configures D11/D5 PWM and D12/D4 directions; the injected motors collection responds to motors.forward(128) in the console.",
+      "elapsedMs": 455
+    },
+    {
+      "path": "chapter-06/04-rover",
+      "status": "runtime-checked",
+      "evidence": "Original two-motor code configures D11/D5 PWM and D12/D4 directions; keyboard up reaches Rover.js.",
+      "elapsedMs": 452
+    },
+    {
+      "path": "chapter-07/01-gps",
+      "status": "runtime-checked",
+      "evidence": "Original GPS and REPL observe latitude37.7749 through real SoftwareSerial.",
+      "elapsedMs": 360
+    },
+    {
+      "path": "chapter-07/02-compass",
+      "status": "runtime-checked",
+      "evidence": "Original compass change handler logs easterly bearing after90deg device input.",
+      "elapsedMs": 147
+    },
+    {
+      "path": "chapter-07/03-compass-lcd",
+      "status": "runtime-checked",
+      "evidence": "Original compass/LCD project displays declination-corrected76deg.",
+      "elapsedMs": 1200
+    },
+    {
+      "path": "chapter-05/03-timer-led-simple",
+      "status": "runtime-checked",
+      "evidence": "Original10-second timeout begins real PWM pulse.",
+      "elapsedMs": 10438
+    },
+    {
+      "path": "chapter-07/04-multi-sensor",
+      "status": "runtime-checked",
+      "evidence": "Original multisensor source displays77F/pressure then switches toheading on shake.",
+      "elapsedMs": 1364
+    }
+  ]
+}

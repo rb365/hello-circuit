@@ -1,7 +1,8 @@
 const { CPU, avrInstruction, AVRTimer, timer0Config, timer1Config, timer2Config,
   AVRIOPort, portBConfig, portCConfig, portDConfig, AVRUSART, usart0Config,
-  AVRADC, adcConfig } = require('avr8js');
+  AVRADC, adcConfig, AVRTWI, twiConfig } = require('avr8js');
 const EventEmitter = require('events');
+const { PeripheralManager } = require('./peripherals');
 
 function loadHex(hex) {
   const bytes = new Uint8Array(32768);
@@ -31,17 +32,35 @@ class Uno {
     this.timer1 = new AVRTimer(this.cpu, timer1Config);
     this.timer2 = new AVRTimer(this.cpu, timer2Config);
     this.adc = new AVRADC(this.cpu, adcConfig);
+    this.peripherals=new PeripheralManager(this);
+    this.twi=new AVRTWI(this.cpu,twiConfig,16000000);
+    this.twi.eventHandler=this.peripherals.twiHandlers(this.twi);
+    for(const port of Object.values(this.ports))port.addListener(()=>this.peripherals.gpio());
     this.usart = new AVRUSART(this.cpu, usart0Config, 16000000);
     this.serial = new VirtualSerial();
     this.received = [];
+    this.nextSerialCycle=0;
     this.usart.onByteTransmit = value => this.received.push(value);
     this.usart.onRxComplete = () => this.feedSerial();
     this.usart.onConfigurationChange = () => this.feedSerial();
+    const readSerial=this.cpu.readHooks[usart0Config.UDR];
+    this.cpu.readHooks[usart0Config.UDR]=address=>{
+      const byte=readSerial(address);
+      // Virtual USB transport leaves a small frame gap after a complete
+      // Firmata sysex request. That lets genuine Wire/Serial handlers service
+      // concurrent sensors before the next host request arrives.
+      const gap=byte===247?32000:1;
+      this.nextSerialCycle=this.cpu.cycles+gap;
+      this.cpu.addClockEvent(()=>this.feedSerial(),gap);
+      return byte;
+    };
     this.inputs = Array(20).fill(0);
     this.analog = Array(6).fill(0);
   }
   feedSerial() {
-    if (this.serial.queue.length && this.usart.rxEnable && !this.usart.rxBusy) {
+    // AVR8js has a single receive register. Keep USB transport bytes queued
+    // until the firmware consumes it instead of overwriting unread data.
+    if (this.serial.queue.length && this.cpu.cycles>=this.nextSerialCycle && this.usart.rxEnable && !this.usart.rxBusy && !(this.cpu.data[usart0Config.UCSRA]&128)) {
       this.usart.writeByte(this.serial.queue.shift());
     }
   }
@@ -59,6 +78,7 @@ class Uno {
     port.setPin(bit, Boolean(value));
   }
   pinLocation(pin) { return pin < 8 ? [this.ports.D, pin] : pin < 14 ? [this.ports.B, pin - 8] : [this.ports.C, pin - 14]; }
+  readPin(pin) {if(!Number.isInteger(pin)||pin<0||pin>19)return 0;const[port,bit]=this.pinLocation(pin);return (this.cpu.data[port.portConfig.PIN]>>bit)&1;}
   step(cycles = 160000) {
     const end = this.cpu.cycles + cycles;
     this.feedSerial();
@@ -88,7 +108,12 @@ class Uno {
         servo[pin] = value > 180 ? Math.max(0,Math.min(180,(value-range.min)*180/(range.max-range.min))) : value;
       }
     }
-    return { digital, pwm, servo, analog: [...this.analog], simTimeMs: this.cpu.cycles / 16000 };
+    const modes={};
+    for(let pin=0;pin<20;pin++){
+      const[port,bit]=this.pinLocation(pin),mask=1<<bit;
+      modes[pin]=io?.pins[pin]?.mode??(this.cpu.data[port.portConfig.DDR]&mask?1:this.cpu.data[port.portConfig.PORT]&mask?11:0);
+    }
+    return { digital, pwm, servo, modes, components:this.peripherals.snapshot(), analog: [...this.analog], simTimeMs: this.cpu.cycles / 16000 };
   }
 }
 
