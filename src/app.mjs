@@ -25,7 +25,7 @@ function replaceCode(code){suppressSave=true;editor.dispatch({changes:{from:0,to
 function validName(name){return typeof name==='string'&&/^(?!\.)(?:[\w-]+\/)*[\w.-]+\.(js|json|html|css|sh)$/.test(name)&&name.length<=100&&!name.includes('..');}
 function normalizeProject(p){
  if(p?.version===1)p={...blank(),name:p.lesson?`${p.lesson} circuit`:'Imported circuit',files:{'index.js':p.code},parts:p.parts,wires:p.wires};
- if(!p||p.version!==2||!p.files||typeof p.files!=='object'||Array.isArray(p.files)||!Array.isArray(p.parts)||!Array.isArray(p.wires))throw new Error('This is not a Little Circuit Lab project file.');
+ if(!p||p.version!==2||!p.files||typeof p.files!=='object'||Array.isArray(p.files)||!Array.isArray(p.parts)||!Array.isArray(p.wires))throw new Error('This is not a Little Bunny Circuit Lab project file.');
  const files=Object.entries(p.files);if(!files.length||files.length>30||files.some(([name,code])=>!validName(name)||typeof code!=='string'||code.length>60000)||files.reduce((sum,[,code])=>sum+code.length,0)>250000)throw new Error('Use up to 30 code files, with 60,000 characters per file.');
  if(!Object.hasOwn(p.files,p.entry)||!p.entry.endsWith('.js')&&!p.entry.endsWith('.sh'))throw new Error('Choose a JavaScript entry file, or a .sh file for the virtual Pi/BeagleBone shell.');
  if(p.parts.length<1||p.parts.length>60||p.wires.length>250)throw new Error('Use up to 60 components and 250 wires.');

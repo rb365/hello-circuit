@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Little Bunny Circuit Lab — circuit ears</title>
+  <desc id="desc">A blue bunny whose ears are rounded circuit traces, with a small orange connection pad.</desc>
+  <path d="M47 72V31C47 22 42 16 35 16S23 22 23 31V54M80 69V25C80 16 85 10 92 10S104 16 104 25V54" fill="none" stroke="#194ced" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path fill="#194ced" d="M31 73C31 62 44 57 64 57S98 62 98 73V92C98 110 84 121 64 121S31 110 31 92Z"/>
+  <circle cx="23" cy="54" r="8" fill="#ff7849"/>
+  <circle cx="104" cy="54" r="8" fill="#194ced"/>
+  <circle cx="104" cy="54" r="3" fill="#fff"/>
+  <circle cx="52" cy="87" r="4.5" fill="#fff"/>
+  <circle cx="76" cy="87" r="4.5" fill="#fff"/>
+</svg>

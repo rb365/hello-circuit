@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Little Bunny Circuit Lab — friendly bunny</title>
+  <desc id="desc">A blue bunny face with two long ears, white eyes, and a small orange nose.</desc>
+  <path fill="#194ced" d="M37 63C29 50 22 32 25 18C27 8 35 6 42 14C50 23 54 41 56 54C61 53 67 53 72 55C73 40 78 20 87 12C94 6 102 11 102 21C101 36 94 53 88 63C103 70 109 82 105 97C101 114 85 122 64 122C43 122 27 114 23 97C19 82 24 70 37 63Z"/>
+  <circle cx="48" cy="85" r="5" fill="#fff"/>
+  <circle cx="80" cy="85" r="5" fill="#fff"/>
+  <path fill="#ff7849" d="M58 96Q64 93 70 96Q69 101 64 104Q59 101 58 96Z"/>
+</svg>

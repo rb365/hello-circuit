@@ -1,4 +1,4 @@
-Little Circuit Lab — third-party notices
+Little Bunny Circuit Lab — third-party notices
 
 Original interface, examples and browser adapter: MIT (see LICENSE).
 Firmware and bundled dependencies retain their own licenses below.

@@ -1,4 +1,4 @@
-# Little Circuit Lab
+# Little Bunny Circuit Lab
 
 A browser workbench for following **JavaScript on Things** without a physical board. Start with an unwired Arduino Uno and an empty code editor, choose components, connect pins, and write your own program. Examples are optional and live in **Help & book companion**.
 

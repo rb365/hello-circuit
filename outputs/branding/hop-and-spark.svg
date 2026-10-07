@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Little Bunny Circuit Lab — hop and spark</title>
+  <desc id="desc">A blue bunny hopping to the right beside a small orange spark.</desc>
+  <path fill="#194ced" d="M84 55L66 24C63 16 66 10 72 13C80 18 85 29 88 41L94 51Z"/>
+  <path fill="#194ced" d="M25 83C25 65 38 51 55 51C67 51 75 55 82 60C80 47 85 38 95 35L92 17C90 8 93 4 99 7C105 11 107 22 108 37C119 43 121 54 116 64C112 71 104 74 96 73L75 89L89 99C96 105 93 114 85 114H60C52 114 49 106 56 100L63 95L49 88L35 108C31 114 23 110 25 103L32 87C28 89 25 88 25 83Z"/>
+  <circle cx="23" cy="80" r="10" fill="#194ced"/>
+  <circle cx="104" cy="53" r="3.5" fill="#fff"/>
+  <path fill="#ff7849" d="M29 16L33 25L42 29L33 33L29 42L25 33L16 29L25 25Z"/>
+</svg>

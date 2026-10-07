@@ -14,7 +14,7 @@ for(const file of JSON.parse(fs.readFileSync('node_modules/.lab-frontend-inputs.
     directory=path.dirname(directory);
   }
 }
-let notices='Little Circuit Lab — third-party notices\n\nOriginal interface, examples and browser adapter: MIT (see LICENSE).\nFirmware and bundled dependencies retain their own licenses below.\nMatching firmware source: /firmware/source.tar.gz\nFirmware build details: /firmware/BUILD.md\nOriginal app source: /source.zip\n\nFrontend packages\n';
+let notices='Little Bunny Circuit Lab — third-party notices\n\nOriginal interface, examples and browser adapter: MIT (see LICENSE).\nFirmware and bundled dependencies retain their own licenses below.\nMatching firmware source: /firmware/source.tar.gz\nFirmware build details: /firmware/BUILD.md\nOriginal app source: /source.zip\n\nFrontend packages\n';
 for(const[name,{directory,pkg}]of [...packages].sort()){
   notices+='\n========================================\n'+name+'\nDeclared license: '+JSON.stringify(pkg.license??pkg.licenses)+'\n';
   for(const file of fs.readdirSync(directory).filter(n=>/^(license|copying|copyright|licence)(\.|-|$)/i.test(n))){
