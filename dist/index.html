@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#194ced">
+  <title>Little Circuit Lab · JavaScript meets Arduino</title>
+  <meta name="description" content="Write real Johnny-Five JavaScript, wire a virtual Arduino, and see your ideas light up. A free browser lab. No board or installation needed.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23194ced'/%3E%3Cpath d='M9 9v8h14v6' fill='none' stroke='white' stroke-width='3'/%3E%3Ccircle cx='9' cy='8' r='4' fill='%23ff7849'/%3E%3Ccircle cx='23' cy='24' r='4' fill='%231ad3df'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Little Circuit Lab home"><span class="brand-symbol" aria-hidden="true">⌁</span><span>little circuit <b>lab</b><small>JAVASCRIPT MEETS ARDUINO</small></span></a>
+    <div class="header-actions"><span class="browser-badge">Your browser is the board</span><button id="share" class="secondary">Share project</button><button id="about-open" class="icon-button" aria-label="About this lab">?</button></div>
+  </header>
+  <main>
+    <section class="lesson-intro" aria-labelledby="lesson-title">
+      <div><div class="eyebrow">LET’S MAKE SOMETHING HAPPEN</div><h1 id="lesson-title">Make a light blink.</h1><p id="lesson-description">Meet the “hello, world” of electronics. Run the code, then change 500 to 100 and run it again.</p></div>
+      <div class="lesson-note"><span class="note-number" id="lesson-number">01</span><span>Small experiments.<br>Big discoveries.</span></div>
+    </section>
+    <nav class="lessons" aria-label="Choose an experiment"></nav>
+    <section class="workbench" aria-label="JavaScript and circuit workspace">
+      <div class="panel code-panel">
+        <div class="panel-heading"><div class="panel-title"><span class="panel-icon">{ }</span><h2>Your JavaScript</h2></div><div class="run-controls"><button id="stop" class="secondary compact" disabled>■ Stop</button><button id="run" class="primary compact">▶ Run code</button></div></div>
+        <div class="filebar"><span id="filename">blink.js</span><span>Johnny-Five</span><button id="reset-code" class="text-button">Reset code</button></div>
+        <div id="editor" aria-label="JavaScript code editor"></div>
+        <div class="editor-footer"><span>Edit freely. Press <kbd>⌘ / Ctrl</kbd> + <kbd>Enter</kbd> to run.</span><span id="code-save">Saved on this device</span></div>
+      </div>
+      <div class="panel circuit-panel">
+        <div class="panel-heading"><div class="panel-title"><span class="panel-icon">⌁</span><h2>Your circuit</h2></div><span id="status" role="status" class="status idle">Ready to try</span></div>
+        <div class="circuit-toolbar"><label class="add-label">Add <select id="add-component" aria-label="Add a circuit part"><option value="">a part…</option><option value="led">LED</option><option value="resistor">Resistor</option><option value="button">Button</option><option value="pot">Dial</option><option value="servo">Servo motor</option></select></label><button id="reset-circuit" class="text-button">Reset wiring</button><button id="remove-part" class="text-button danger" disabled>Remove part</button></div>
+        <div id="circuit-viewport"><div id="circuit-stage"><svg id="wires" viewBox="0 0 720 430" aria-label="Circuit wires"></svg><div id="parts"></div></div></div>
+        <div class="circuit-footer"><span id="wire-hint">Click two gold pins to connect them. Drag a part by its name.</span><button id="cancel-wire" class="text-button" hidden>Cancel wire</button></div>
+      </div>
+    </section>
+    <section class="bottom-row">
+      <div class="console-panel"><div class="console-heading"><h2><span aria-hidden="true">›_</span> Console</h2><div><span id="console-status">Your program’s messages appear here.</span><button id="clear-console" class="text-button">Clear</button></div></div><div id="console" role="log" aria-live="polite"><div class="console-empty">Ready when you are. Press <strong>Run code</strong> to wake up your virtual Arduino.</div></div></div>
+      <aside class="try-card"><span class="try-icon" aria-hidden="true">✦</span><div><h2>Try this next</h2><p id="challenge">How slow can you make the LED blink? Try 2000 milliseconds.</p><button id="learn-toggle" class="text-button">How does it work?</button></div></aside>
+    </section>
+    <section id="explanation" class="explanation" hidden><h2>The code talks. The board listens.</h2><p>Johnny-Five turns actions like <code>led.blink(500)</code> into Firmata messages. A simulated Arduino runs the same firmware a real board would, receives those messages, and changes its pins. Here, both sides run in your browser.</p><p>The built-in LED is connected to pin 13. An external LED needs a complete path from an output pin, through a resistor and the LED, back to GND. A button and a dial send information in the other direction.</p><p>This lab uses a simplified circuit model: it shows connections and pin behavior, but does not calculate current, component damage, or all physical effects.</p></section>
+    <footer class="page-footer"><span>Built for curious minds. No hardware needed.</span><div><a href="https://livebook.manning.com/book/javascript-on-things/chapter-2" target="_blank" rel="noopener">Read JavaScript on Things</a><button id="download-project" class="text-button">Download project</button><button id="open-project" class="text-button">Open project</button><input id="project-file" type="file" accept=".json,application/json" hidden></div></footer>
+  </main>
+  <dialog id="about"><div class="dialog-header"><h2>A little lab, open to everyone.</h2><button id="about-close" class="icon-button" aria-label="Close about">×</button></div><p>Explore JavaScript and electronics without buying a board. Paste Johnny-Five code, connect virtual components, and experiment.</p><p>The app uses the real <a href="https://github.com/rwaldron/johnny-five" target="_blank" rel="noopener">Johnny-Five</a> library, <a href="https://github.com/wokwi/avr8js" target="_blank" rel="noopener">AVR8js</a> processor emulation, real Firmata firmware, and <a href="https://github.com/wokwi/wokwi-elements" target="_blank" rel="noopener">Wokwi’s component visuals</a>. AVR8js is also the Arduino engine used by Velxio. This is an independent learning app.</p><p>Start with LEDs, buttons, analog inputs, and servos. Some Johnny-Five devices need additional firmware or a component model that this lab does not include. Native Node.js modules, package installation, and a terminal are not available.</p><p>Your code runs locally in a worker. Stop terminates it and resets the board. Projects are saved on this device. Shared links include the code and circuit; opening a link never runs it automatically.</p><p>The experiments are original examples. The book link is a reading companion; this app is not affiliated with Manning, Arduino, Wokwi, or Velxio.</p><p><a href="/source.zip" download>Download the open-source app</a> · <a href="/THIRD_PARTY_NOTICES.txt">Credits and licenses</a></p></dialog>
+  <dialog id="share-dialog"><div class="dialog-header"><h2>Pass the spark along.</h2><button id="share-close" class="icon-button" aria-label="Close sharing">×</button></div><p>This link opens your code and circuit. Your friend can press Run when they’re ready.</p><label class="share-label" for="share-link">Project link</label><input id="share-link" class="share-link" readonly><div class="share-actions"><span id="share-status" role="status"></span><button id="copy-share" class="primary">Copy link</button></div><p class="share-note">The link contains your code. Anyone you send it to can see it.</p></dialog>
+  <div id="toast" role="status" hidden></div>
+  <script type="module" src="/assets/app.js"></script>
+</body>
+</html>

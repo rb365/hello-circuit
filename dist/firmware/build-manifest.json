@@ -1,0 +1,14 @@
+{
+  "sketch": "StandardFirmata",
+  "board": "arduino:avr:uno",
+  "arduinoCLI": "1.5.1",
+  "arduinoAVR": "1.8.6",
+  "avrGcc": "7.3.0-atmel3.6.1-arduino7",
+  "Firmata": "2.5.9",
+  "Servo": "1.2.2",
+  "firmwareSha256": "521371e2f0f6fbc18a7db0a2e7aa49768103d202dc3805ab0bb3971d42f99fe2",
+  "sourceModified": false,
+  "independentRebuildMatches": true,
+  "flashBytes": 13212,
+  "ramBytes": 1153
+}
