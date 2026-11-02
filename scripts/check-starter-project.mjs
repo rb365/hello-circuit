@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {EventEmitter} from 'node:events';
+import {starterProject} from '../src/starter-project.mjs';
+const project=starterProject();
+assert.equal(project.parts.length,3);assert.equal(project.wires.length,6);
+for(const [a,b] of [['board:2','button:1.l'],['board:GND.1','button:2.l'],['board:5V','display:VCC'],['board:GND.2','display:GND'],['board:A4','display:SDA'],['board:A5','display:SCL']])assert.ok(project.wires.some(w=>w.a===a&&w.b===b));
+let board,button,lcd,toggles=0,prints=[];
+const five={Board:class extends EventEmitter{constructor(){super();board=this;}},Button:class extends EventEmitter{constructor(options){super();assert.deepEqual(JSON.parse(JSON.stringify(options)),{pin:2,isPullup:true});button=this;}},Led:class{constructor(pin){assert.equal(pin,13);}toggle(){toggles++;}},LCD:class{constructor(options){assert.equal(options.controller,'JHD1313M1');assert.equal(options.color,'white');lcd=this;}cursor(row,col){assert.equal(row,0);assert.equal(col,0);return this;}print(text){prints.push(text);return this;}}};
+vm.runInNewContext(project.files['index.js'],{require:name=>{assert.equal(name,'johnny-five');return five;}});
+assert.equal(lcd,undefined);assert.deepEqual(prints,[]);board.emit('ready');assert.deepEqual(prints,['Count: 0']);button.emit('press');button.emit('press');assert.deepEqual(prints,['Count: 0','Count: 1','Count: 2']);assert.equal(toggles,2);
+project.parts[0].x=999;assert.notEqual(starterProject().parts[0].x,999);
+console.log('Starter project: wiring and short-program ready/press contract passed (mock API; real interaction is a browser gate).');

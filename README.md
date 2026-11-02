@@ -1,6 +1,6 @@
 # Hello Circuit
 
-A browser workbench for following **JavaScript on Things** without a physical board. Start with an unwired Arduino Uno and an empty code editor, choose components, connect pins, and write your own program. Examples are optional and live in **Help & book companion**.
+A browser workbench for following **JavaScript on Things** without a physical board. On your first visit, try a short button counter: press Run, then click the button to update an LCD and toggle the Uno’s built-in light. Choose New project for an unwired Uno and empty editor, then add components and write your own program. Examples are optional and live in **Help & book companion**.
 
 The workbench can run locally or as a hosted static website. The same browser runtime is used in both.
 
@@ -30,7 +30,7 @@ Alternatively, run `npm start` from the project directory if Node.js and Python 
 4. Run the program. The interactive console evaluates JavaScript for objects exposed with `board.repl.inject`. Control keys send arrow/space/Ctrl+C events to rover programs. The virtual Pi/BeagleBone console also has a bounded GPIO shell.
 5. Experiment. Change light, temperature, pressure, acceleration, GPS position or gesture controls. LCDs, motors, LEDs and the web-page preview respond to the wired circuit.
 
-Download/Open save complete JSON projects. Share includes files, assets, components and wiring in a link. Projects are saved on this device, and imported/shared programs wait for Run. Loading an example or changing the board can be undone. A first visit opens the empty workbench, rather than a prepared lesson.
+Download/Open save complete JSON projects. Share includes files, assets, components and wiring in a link. Projects are saved on this device, and imported/shared programs wait for Run. Loading an example or changing the board can be undone. Only a first visit with no saved payload or project link opens the button counter; it waits for Run. Saved projects (including blank work) and shared links retain priority. New project always opens a blank workbench.
 
 The canvas extends in every direction. Drag empty space to pan, use +/− or Ctrl/⌘-scroll to zoom, and choose Fit (F) to see the whole circuit. If all parts are off screen, Back to circuit brings them into view. Focus circuit gives you more building space while keeping Run and Stop available.
 
@@ -121,7 +121,7 @@ browser profile for unfamiliar contributions. Test at a project subpath as well:
 put the extracted files in a directory named `hello-circuit` and serve its parent,
 then visit `http://127.0.0.1:4180/hello-circuit/`.
 
-Before merging, check blank startup, a known program's Run/Stop/Run and observable
+Before merging, check first-visit counter and blank New project, a known program's Run/Stop/Run and observable
 output, adding/moving/wiring components, Undo/Redo, Download/Open/Share, modal
 close/Escape and keyboard focus, and 360/390/768/1440 px layouts. Check the browser
 console/network panel for failures. After deployment, repeat the smoke check at
