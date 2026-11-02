@@ -1,6 +1,8 @@
 // Original visual router. Electrical endpoints and connection data stay unchanged.
 // Rectangles are solid bodies; their clearance boundaries may carry a wire.
 const EPS=1e-7;
+// Equal-length routes must keep their tie order after world-coordinate shifts.
+const compareCost=(a,b)=>a===b||Math.abs(a-b)<EPS?0:a-b;
 const vectors={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
 const distance=(a,b)=>Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
 const same=(a,b)=>Math.abs(a.x-b.x)<EPS&&Math.abs(a.y-b.y)<EPS;
@@ -27,7 +29,7 @@ function pathCost(points,bendPenalty){let cost=0,last=-1;for(let i=1;i<points.le
 class Heap{
   constructor(){this.items=[];this.order=0;}
   push(value){value.order=this.order++;const a=this.items;a.push(value);let i=a.length-1;while(i){const p=(i-1)>>1;if(this.before(a[p],value))break;a[i]=a[p];i=p;}a[i]=value;}
-  before(a,b){return a.f<b.f||a.f===b.f&&(a.g>b.g||a.g===b.g&&a.order<b.order);}
+  before(a,b){const f=compareCost(a.f,b.f),g=compareCost(a.g,b.g);return f<0||f===0&&(g>0||g===0&&a.order<b.order);}
   pop(){const a=this.items,first=a[0],last=a.pop();if(a.length){let i=0;while(i*2+1<a.length){let child=i*2+1;if(child+1<a.length&&this.before(a[child+1],a[child]))child++;if(this.before(last,a[child]))break;a[i]=a[child];i=child;}a[i]=last;}return first;}
   get length(){return this.items.length;}
 }
@@ -44,14 +46,19 @@ class Heap{
  *
  * A few cheap orthogonal candidates handle common circuits. Difficult routes
  * use a bounded search over rectangle edges, never a per-pixel canvas grid.
+ * Outer channels follow circuit/endpoint extents by default. options.bounds
+ * may supply an additional reference area; it does not clip circuit geometry.
  * No DOM, persistent cache, input mutation, or electrical simulation is used.
  */
 export function routeWires(connections,obstacles=[],options={}){
   const clearance=Math.max(0,options.clearance??10),escape=Math.max(1,options.escape??14),laneGap=Math.max(0,options.laneGap??4),lanes=Math.max(1,Math.min(12,options.lanes??6));
   const bendPenalty=Math.max(0,options.bendPenalty??18),maxExpansions=Math.max(1,Math.min(20000,options.maxExpansions??4000)),margin=Math.max(1,options.margin??32);
-  const bounds=options.bounds??{x:0,y:0,width:1600,height:1000};
   const bodies=obstacles.filter(r=>r&&[r.x,r.y,r.width,r.height].every(Number.isFinite)&&r.width>0&&r.height>0).map((r,bodyIndex)=>({...r,bodyIndex,left:r.x,right:r.x+r.width,top:r.y,bottom:r.y+r.height}));
   const padded=bodies.map(r=>({...r,left:r.left-clearance,right:r.right+clearance,top:r.top-clearance,bottom:r.bottom+clearance}));
+  const endpoints=connections.flatMap(wire=>[wire.a,wire.b]).filter(p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y));
+  const extentX=[...padded.flatMap(r=>[r.left,r.right]),...endpoints.map(p=>p.x)],extentY=[...padded.flatMap(r=>[r.top,r.bottom]),...endpoints.map(p=>p.y)];
+  const left=extentX.length?Math.min(...extentX):0,top=extentY.length?Math.min(...extentY):0;
+  const bounds=options.bounds??{x:left,y:top,width:extentX.length?Math.max(...extentX)-left:0,height:extentY.length?Math.max(...extentY)-top:0};
   const byId=new Map(bodies.map(r=>[r.id,r]));
   const segmentCache=new Map(),pointCache=new Map();
   const clear=(a,b)=>{if(same(a,b))return true;const first=a.x<b.x||a.x===b.x&&a.y<b.y?a:b,second=first===a?b:a,key=`${first.x},${first.y}:${second.x},${second.y}`;if(segmentCache.has(key))return segmentCache.get(key);const result=!padded.some(r=>intersects(a,b,r));segmentCache.set(key,result);return result;};
@@ -86,7 +93,7 @@ export function routeWires(connections,obstacles=[],options={}){
       for(const [dx,dy,nextAxis]of [[-1,0,0],[1,0,0],[0,-1,1],[0,1,1]]){
         const nx=x+dx,ny=y+dy;if(nx<0||nx>=width||ny<0||ny>=ys.length)continue;const nextNode=ny*width+nx,next=point(nextNode);if(!pointClear(next)||!clear(here,next))continue;
         const state=nextNode*2+nextAxis,g=current.g+distance(here,next)+(nextAxis===lastAxis?0:bendPenalty);
-        if(g>=(costs.get(state)??Infinity))continue;costs.set(state,g);previous.set(state,current.state);heap.push({state,g,f:g+distance(next,b.escape)});
+        if(compareCost(g,costs.get(state)??Infinity)>=0)continue;costs.set(state,g);previous.set(state,current.state);heap.push({state,g,f:g+distance(next,b.escape)});
       }
     }
     return null;
@@ -96,13 +103,13 @@ export function routeWires(connections,obstacles=[],options={}){
     if(!wire.a||!wire.b||![wire.a.x,wire.a.y,wire.b.x,wire.b.y].every(Number.isFinite)){results[index]={id:wire.id,points:[],blocked:true};continue;}
     const a=endpoint(wire.a,rank),b=endpoint(wire.b,rank),start=a.escape,end=b.escape;
     const candidates=[[start,{x:end.x,y:start.y},end],[start,{x:start.x,y:end.y},end]];
-    const channels=(values,p,q)=>[...new Set(values)].sort((x,y)=>Math.abs(x-p)+Math.abs(x-q)-Math.abs(y-p)-Math.abs(y-q)||x-y).slice(0,24);
+    const channels=(values,p,q)=>[...new Set(values)].sort((x,y)=>compareCost(Math.abs(x-p)+Math.abs(x-q),Math.abs(y-p)+Math.abs(y-q))||x-y).slice(0,24);
     for(const x of channels([...baseX,start.x,end.x],start.x,end.x))candidates.push([start,{x,y:start.y},{x,y:end.y},end]);
     for(const y of channels([...baseY,start.y,end.y],start.y,end.y))candidates.push([start,{x:start.x,y},{x:end.x,y},end]);
     // Outer channels keep sparse long detours available even in crowded scenes.
     for(const x of [minX,maxX])candidates.push([start,{x,y:start.y},{x,y:end.y},end]);
     for(const y of [minY,maxY])candidates.push([start,{x:start.x,y},{x:end.x,y},end]);
-    const orderedCandidates=candidates.map(compact).sort((p,q)=>pathCost([a.point,...p,b.point],bendPenalty)-pathCost([a.point,...q,b.point],bendPenalty));
+    const orderedCandidates=candidates.map(compact).sort((p,q)=>compareCost(pathCost([a.point,...p,b.point],bendPenalty),pathCost([a.point,...q,b.point],bendPenalty)));
     let middle=orderedCandidates.find(isClear),blocked=a.blocked||b.blocked;
     if(!middle)middle=search(a,b);
     if(!middle){blocked=true;middle=orderedCandidates.map(points=>({points,hits:points.reduce((n,p,i)=>n+(i?padded.filter(r=>intersects(points[i-1],p,r)).length:0),0)})).sort((p,q)=>p.hits-q.hits)[0]?.points??[start,{x:end.x,y:start.y},end];}

@@ -2,3 +2,6 @@ node_modules/
 .sites-runtime/
 .DS_Store
 *.tar.gz
+
+# Local design reference, not a website asset.
+/ChatGPT Image Oct 18, 2026, 05_33_13 PM.jpg

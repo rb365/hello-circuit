@@ -13,12 +13,14 @@ Alternatively, run `npm start` from the project directory. The prebuilt `dist` f
 ## Work alongside the book
 
 1. Choose the book’s board. Arduino Uno is the default; the other boards are labelled virtual API models.
-2. Add parts from the component menu. Drag a part by its name and click two gold pins to make a wire. Select a component to change values or see measurements; select a wire and use Remove to delete it.
+2. Choose a part from the searchable component library, then click the canvas to place it, or drag it straight from the library. Move parts by their body or name. Click two gold pins, drag between pins, or use the larger targets in the Pins tab to make a wire. The Details tab holds properties and readings; Undo/Redo covers circuit edits.
 3. Write the code. Add local files such as `Rover.js`, and choose the program’s entry file. HTML/CSS, JSON and the selected virtual-shell exercise are also editable.
 4. Run the program. The interactive console evaluates JavaScript for objects exposed with `board.repl.inject`. Control keys send arrow/space/Ctrl+C events to rover programs. The virtual Pi/BeagleBone console also has a bounded GPIO shell.
 5. Experiment. Change light, temperature, pressure, acceleration, GPS position or gesture controls. LCDs, motors, LEDs and the web-page preview respond to the wired circuit.
 
 Download/Open save complete JSON projects. Share includes files, assets, components and wiring in a link. Projects are saved on this device, and imported/shared programs wait for Run. Loading an example or changing the board can be undone. A first visit opens the empty workbench, rather than a prepared lesson.
+
+The canvas extends in every direction. Drag empty space to pan, use +/− or Ctrl/⌘-scroll to zoom, and choose Fit (F) to see the whole circuit. If all parts are off screen, Back to circuit brings them into view. Focus circuit gives you more building space while keeping Run and Stop available.
 
 ## Book coverage and limits
 

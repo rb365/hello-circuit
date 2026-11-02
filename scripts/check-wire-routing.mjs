@@ -53,6 +53,28 @@ for(let i=0;i<fanout.length;i++)verify(fanout[i],sorted[i],[uno,...loads]);
 const frozenConnections=structuredClone(fanout),frozenBodies=structuredClone([uno,...loads]);routeWires(frozenConnections,frozenBodies);assert.deepEqual(frozenConnections,fanout);assert.deepEqual(frozenBodies,[uno,...loads]);checks+=2;
 const straight=wire('straight',pin(undefined,10,10,'right'),pin(undefined,100,10,'left')),straightRoute=routeWires([straight],[])[0];verify(straight,straightRoute,[]);expect(straightRoute.points.length===4,'Straight routes retain both explicit escape vertices');
 assert.deepEqual(straightRoute.points[1],{x:24,y:10});assert.deepEqual(straightRoute.points.at(-2),{x:86,y:10});checks+=2;
+assert.deepEqual(routeWires([],[]),[]);checks++;
+
+// World translations must not change a route's shape or invent a canvas edge.
+function translatedInput(connections,obstacles,dx,dy){return {connections:connections.map(w=>({...w,a:{...w.a,x:w.a.x+dx,y:w.a.y+dy},b:{...w.b,x:w.b.x+dx,y:w.b.y+dy}})),obstacles:obstacles.map(r=>({...r,x:r.x+dx,y:r.y+dy}))};}
+function verifyTranslation(connections,obstacles,dx,dy,label,options={}){
+ const reference=routeWires(connections,obstacles,options),input=translatedInput(connections,obstacles,dx,dy),movedOptions=options.bounds?{...options,bounds:{...options.bounds,x:(options.bounds.x??0)+dx,y:(options.bounds.y??0)+dy}}:options,routes=routeWires(input.connections,input.obstacles,movedOptions);
+ for(let i=0;i<routes.length;i++){
+  expect(routes[i].blocked===reference[i].blocked,`${label}: translation preserves blocked state`);
+  expect(routes[i].points.length===reference[i].points.length,`${label}: translation preserves bends and escape vertices`);
+  for(let j=0;j<reference[i].points.length;j++){const a=reference[i].points[j],b=routes[i].points[j];expect(Math.abs(a.x-(b.x-dx))<1e-6&&Math.abs(a.y-(b.y-dy))<1e-6,`${label} wire ${connections[i].id}, offset ${dx}/${dy}, point ${j}: ${JSON.stringify(a)} versus ${JSON.stringify({x:b.x-dx,y:b.y-dy})}`);}
+  verify(input.connections[i],routes[i],input.obstacles,{blocked:reference[i].blocked});
+ }
+ return routes.length;
+}
+for(const [dx,dy]of [[-5000,-4000],[1000000,-1000000]]){
+ verifyTranslation([sameBoard],[uno],dx,dy,'Translated inset Uno headers');
+ verifyTranslation([around],[source,target,wall],dx,dy,'Translated obstacle detour');
+ verifyTranslation([through],maze,dx,dy,'Translated sparse-search maze',{laneGap:0});
+ verifyTranslation(fanout,[uno,...loads],dx,dy,'Translated fan-out');
+ verifyTranslation([straight],[],dx,dy,'Translated endpoints without bodies');
+ verifyTranslation([around],[source,target,wall],dx,dy,'Explicit reference bounds',{bounds:{x:-100,y:-100,width:1600,height:1000}});
+}
 
 // Use installed official pin metadata, without executing browser/custom elements.
 const modules={uno:'arduino-uno',led:'led',rgb:'rgb-led',resistor:'resistor',button:'pushbutton',pot:'potentiometer',servo:'servo',piezo:'buzzer',switch:'slide-switch',lcd:'lcd1602','grove-lcd':'lcd1602'};
@@ -68,12 +90,13 @@ function sceneInput(scene){
  function end(key){const index=key.indexOf(':'),part=scene.parts.find(p=>p.id===key.slice(0,index)),spec=definitions[part.type],p=catalog[part.type].find(pin=>pin.name===key.slice(index+1));assert.ok(p,key);const sides=[['left',p.x],['right',spec.width-p.x],['up',p.y],['down',spec.height-p.y]].sort((a,b)=>a[1]-b[1]);return pin(part.id,part.x+p.x*spec.scale,part.y+35+p.y*spec.scale,sides[0][0]);}
  return {obstacles:bodies,connections:scene.wires.map((w,i)=>wire(String(i),end(w.a),end(w.b)))};
 }
-const prepared=bookExamples.filter(e=>e.scene),sceneResults=[];let wireCount=0,maxMs=0;const began=performance.now();
+const prepared=bookExamples.filter(e=>e.scene),sceneResults=[];let wireCount=0,translatedWires=0,maxMs=0;const began=performance.now();
 for(const example of prepared){const input=sceneInput(example.scene),t=performance.now(),routes=routeWires(input.connections,input.obstacles),ms=performance.now()-t;maxMs=Math.max(maxMs,ms);wireCount+=routes.length;sceneResults.push({path:example.sourcePath,wires:routes.length,blocked:routes.filter(r=>r.blocked).length,ms});for(let i=0;i<routes.length;i++)verify(input.connections[i],routes[i],input.obstacles,{blocked:routes[i].blocked});}
 const elapsed=performance.now()-began;
 if(sceneResults.some(s=>s.blocked))console.log('Blocked scene diagnostic:',JSON.stringify(sceneResults.filter(s=>s.blocked)));
 expect(sceneResults.every(s=>s.blocked===0),'All prepared scenes have body-avoiding routes');
 expect(maxMs<150,'Largest prepared scene routes within 150 ms on the local test machine');
+for(const example of prepared){const input=sceneInput(example.scene);for(const [dx,dy]of [[-5000,-4000],[1000000,-1000000]])translatedWires+=verifyTranslation(input.connections,input.obstacles,dx,dy,example.sourcePath);}
 // Deliberate upper limit: 60 bodies and 250 connections, not a per-pixel grid.
 const stressBodies=Array.from({length:60},(_,i)=>rect('p'+i,40+(i%10)*150,40+Math.floor(i/10)*150,55,55));
 const stress=Array.from({length:250},(_,i)=>{const a=stressBodies[i%60],b=stressBodies[(i*7+11)%60];return wire(i,pin(a.id,a.x+30,a.y+3,'up'),pin(b.id,b.x+30,b.y+52,'down'));});
@@ -81,4 +104,4 @@ const stressStart=performance.now(),stressRoutes=routeWires(stress,stressBodies)
 expect(stressRoutes.length===250,'Maximum-size redraw retains every connection');expect(stressRoutes.every(r=>r.points.length&&r.points.every(p=>Number.isFinite(p.x)&&Number.isFinite(p.y))),'Stress routes remain finite');expect(stressMs<1500,'Maximum-size redraw is bounded under 1.5 seconds on the local test machine');
 expect(stressRoutes.every(r=>!r.blocked),'Maximum-size separated layout has no blocked wires');
 for(let i=0;i<stress.length;i++)verify(stress[i],stressRoutes[i],stressBodies);
-console.log(JSON.stringify({checks,preparedScenes:prepared.length,preparedWires:wireCount,blocked:sceneResults.filter(s=>s.blocked),elapsedMs:Math.round(elapsed),slowestSceneMs:Math.round(maxMs),stressMs:Math.round(stressMs)},null,2));
+console.log(JSON.stringify({checks,preparedScenes:prepared.length,preparedWires:wireCount,translatedWires,blocked:sceneResults.filter(s=>s.blocked),elapsedMs:Math.round(elapsed),slowestSceneMs:Math.round(maxMs),stressMs:Math.round(stressMs)},null,2));
