@@ -1,7 +1,7 @@
 #!/bin/bash
 # Start this project locally. This script does not publish or upload anything.
 cd -- "$(dirname -- "$0")" || exit 1
-printf 'Little Circuit Lab — local preview\nKeep this window open. Press Ctrl+C to stop.\n\n'
+printf 'Hello Circuit — local preview\nKeep this window open. Press Ctrl+C to stop.\n\n'
 python3 -m http.server 4178 --bind 127.0.0.1 --directory dist &
 lab_preview_pid=$!
 trap 'kill "$lab_preview_pid" 2>/dev/null' EXIT INT TERM

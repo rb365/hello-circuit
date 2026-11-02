@@ -14,13 +14,14 @@ for(const file of JSON.parse(fs.readFileSync('node_modules/.lab-frontend-inputs.
     directory=path.dirname(directory);
   }
 }
-let notices='Little Bunny Circuit Lab — third-party notices\n\nOriginal interface, examples and browser adapter: MIT (see LICENSE).\nFirmware and bundled dependencies retain their own licenses below.\nMatching firmware source: /firmware/source.tar.gz\nFirmware build details: /firmware/BUILD.md\nOriginal app source: /source.zip\n\nFrontend packages\n';
+let notices='Hello Circuit — third-party notices\n\nOriginal interface, examples and browser adapter: MIT (see LICENSE).\nFirmware and bundled dependencies retain their own licenses below.\nMatching firmware source: /firmware/source.tar.gz\nFirmware build details: /firmware/BUILD.md\nOriginal app source: /source.zip\n\nFrontend packages\n';
 for(const[name,{directory,pkg}]of [...packages].sort()){
   notices+='\n========================================\n'+name+'\nDeclared license: '+JSON.stringify(pkg.license??pkg.licenses)+'\n';
   for(const file of fs.readdirSync(directory).filter(n=>/^(license|copying|copyright|licence)(\.|-|$)/i.test(n))){
     const filename=path.join(directory,file);if(fs.statSync(filename).isFile())notices+='\n'+file+'\n'+fs.readFileSync(filename,'utf8');
   }
 }
+notices+='\nOpen Sans UI fonts\n'+fs.readFileSync('dist/assets/hello-circuit/fonts/COPYRIGHT.txt','utf8')+'\n'+fs.readFileSync('dist/assets/hello-circuit/fonts/LICENSE.txt','utf8')+'\n';
 notices+='\nOfficial JavaScript on Things example source\n'+bookSourceLicense+'\n';
 notices+='\n'+fs.readFileSync('dist/runtime-licenses.txt','utf8');
 fs.writeFileSync('dist/THIRD_PARTY_NOTICES.txt',notices);

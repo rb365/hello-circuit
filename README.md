@@ -1,4 +1,4 @@
-# Little Bunny Circuit Lab
+# Hello Circuit
 
 A browser workbench for following **JavaScript on Things** without a physical board. Start with an unwired Arduino Uno and an empty code editor, choose components, connect pins, and write your own program. Examples are optional and live in **Help & book companion**.
 
@@ -57,3 +57,7 @@ Original app code is MIT licensed. The author’s example code and sound retain 
 Sources: [Manning’s book](https://www.manning.com/books/javascript-on-things), [official example repository](https://github.com/lyzadanger/javascript-on-things) pinned to `6f7e825c05933d5658b58c622351d4f9c43d61d5`, [Johnny-Five](https://github.com/rwaldron/johnny-five), [Firmata](https://github.com/firmata/arduino), [AVR8js](https://github.com/wokwi/avr8js), [Wokwi elements](https://github.com/wokwi/wokwi-elements), [CodeMirror](https://codemirror.net/).
 
 The lab is independent and not affiliated with Manning, Arduino, Wokwi or Velxio.
+
+## Branding and project compatibility
+
+Hello Circuit uses the supplied circuit speech-bubble logo and bundled Open Sans fonts. Font licensing is included in `dist/assets/hello-circuit/fonts/` and the third-party notices. The existing hosted URL, package identifier, storage key, project format and browser-agent tool names retain their original names so existing links and saved projects continue to work. Historical artwork and copyright notices retain their original attribution.
