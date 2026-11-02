@@ -711,3 +711,13 @@ b,strong{font-weight:600}
 
 
 @media(min-width:761px) and (max-width:1100px){.code-panel .panel-icon{display:none}.code-panel .panel-title h1{white-space:nowrap}}
+
+/* The native top-layer popover escapes wrapping toolbar and mobile overflow. */
+#examples-menu{position:fixed;inset:auto;margin:0;padding:6px;width:max-content;max-width:calc(100vw - 16px);overflow-y:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface,#fff);box-shadow:0 8px 28px #0002;z-index:100}
+#examples-menu:popover-open{display:flex;flex-direction:column}
+#examples-menu button{display:block;text-align:left;white-space:normal;padding:10px 14px;border:0;background:transparent;color:var(--ink);border-radius:5px;min-height:44px}
+#examples-menu button:hover,#examples-menu button:focus-visible{background:#eaf0ee}
+#examples-menu #examples-browse{border-top:1px solid var(--line);border-radius:0;margin-top:4px}
+.sample-start{display:inline-block;font-size:11px;font-weight:600;padding:3px 7px;border-radius:20px;background:#eaf0ee;color:#34554a;vertical-align:middle}
+.sample-load{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.sample-load small{color:var(--muted);font-size:12px}

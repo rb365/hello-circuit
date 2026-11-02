@@ -25,6 +25,7 @@ let activeBrowser;
 (async()=>{const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),headless:true,args:['--no-sandbox']}); activeBrowser=browser; const results=[],errors=[],http=[];const context=await browser.newContext({viewport:{width:1440,height:1000}});context.setDefaultTimeout(10000);const p=await context.newPage();p.on('pageerror',e=>errors.push(e.message));p.on('response',r=>{if(r.status()>=400)http.push([r.status(),r.url()])});const url=baseURL;const test=async(name,fn)=>{try{await fn();results.push({name,status:'PASS'});}catch(e){results.push({name,status:'FAIL',error:e.message});}console.log(JSON.stringify(results.at(-1)));if(results.at(-1).status==='FAIL')await p.screenshot({path:path.join(output,name.replace(/[^a-z0-9]+/gi,'-')+'-failure.png'),fullPage:true}).catch(()=>{});};
 await p.goto(url);await p.locator('.cm-content').waitFor();await p.waitForTimeout(800);
 const assertBlank=async page=>{await page.waitForFunction(()=>document.querySelectorAll('#parts .part-label').length===1&&document.querySelectorAll('.wire-hit').length===0);assert.equal(await page.locator('.cm-content .cm-line').count(),1);assert.equal(await page.locator('.cm-content .cm-line').first().evaluate(line=>{const copy=line.cloneNode(true);copy.querySelectorAll('.cm-placeholder').forEach(node=>node.remove());return copy.textContent;}),'');assert.equal(await page.locator('#parts .part-label').count(),1);assert.equal(await page.locator('.wire-hit').count(),0);assert(await page.locator('#stop').isDisabled());};
+const selectSample=async(page,index=0)=>{await page.locator('#examples-open').click();await page.locator(`#examples-menu [data-sample-index="${index}"]`).click();};
 const waitCount=async count=>{
  try{await p.waitForFunction(expected=>String.fromCharCode(...(document.querySelector('wokwi-lcd1602')?.characters??[])).includes(`Count: ${expected}`),count,{timeout:20000});}
  catch(cause){const state=await p.evaluate(()=>{const lcd=document.querySelector('wokwi-lcd1602');return {status:document.querySelector('#status')?.textContent,console:document.querySelector('#console')?.innerText,lcdText:String.fromCharCode(...(lcd?.characters??[])),lcdCharacters:Array.from(lcd?.characters??[]),backlight:lcd?.backlight,button:document.querySelector('.push-toggle')?.textContent,led13:document.querySelector('wokwi-arduino-uno')?.led13,warnings:document.querySelector('#warnings')?.textContent};});throw new Error(`Waiting for Count: ${count} failed: ${JSON.stringify(state)}`,{cause});}
@@ -52,7 +53,30 @@ await test('counter run press twice stop and rerun',async()=>{
  await p.locator('#stop').click();assert(await p.locator('#stop').isDisabled());assert(!await p.locator('wokwi-arduino-uno').evaluate(board=>board.led13));
  await p.locator('#run').click();await waitCount(0);await button.click();await waitCount(1);await button.click();await p.locator('#stop').click();
 });
-for(const width of [360,390,768,1440]) await test('layout '+width,async()=>{await p.setViewportSize({width,height:1000});await p.waitForTimeout(150);const m=await p.evaluate(()=>({viewport:innerWidth,scroll:document.documentElement.scrollWidth,font:getComputedStyle(document.body).fontFamily}));assert(m.scroll<=width,JSON.stringify(m));assert.match(m.font,/Open Sans/i);const tagline=await p.locator('.brand-tagline').boundingBox();assert(tagline&&tagline.x>=0&&tagline.x+tagline.width<=width,'Tagline stays inside viewport');await p.screenshot({path:`browser-test-results/prefix-${width}.png`,fullPage:true});});
+for(const width of [360,390,768,1440]) await test('layout '+width,async()=>{await p.setViewportSize({width,height:1000});await p.waitForTimeout(150);const m=await p.evaluate(()=>({viewport:innerWidth,scroll:document.documentElement.scrollWidth,font:getComputedStyle(document.body).fontFamily}));assert(m.scroll<=width,JSON.stringify(m));assert.match(m.font,/Open Sans/i);const tagline=await p.locator('.brand-tagline').boundingBox();assert(tagline&&tagline.x>=0&&tagline.x+tagline.width<=width,'Tagline stays inside viewport');await p.locator('#examples-open').click();await p.locator('#examples-menu').waitFor({state:'visible'});const menu=await p.locator('#examples-menu').boundingBox();assert(menu&&menu.x>=0&&menu.x+menu.width<=width&&menu.y>=0&&menu.y+menu.height<=1000,'Examples menu stays inside viewport');await p.screenshot({path:`browser-test-results/prefix-${width}.png`,fullPage:true});await p.keyboard.press('Escape');assert.equal(await p.locator('#examples-menu').isVisible(),false);});
+await test('mobile examples dismiss when toolbar scrolls offscreen and reopen in bounds',async()=>{
+ try{
+ await p.setViewportSize({width:360,height:700});await p.evaluate(()=>window.scrollTo(0,0));
+ await p.locator('#examples-open').click();await p.locator('#examples-menu').waitFor({state:'visible'});
+ await p.evaluate(()=>{const anchor=document.querySelector('#examples-open').getBoundingClientRect();window.scrollTo(0,window.scrollY+anchor.bottom+20);});
+ await p.waitForFunction(()=>document.querySelector('#examples-open').getBoundingClientRect().bottom<=0);
+ await p.locator('#examples-menu').waitFor({state:'hidden'});assert.equal(await p.locator('#examples-open').getAttribute('aria-expanded'),'false');
+ await p.evaluate(()=>window.scrollTo(0,0));await p.locator('#examples-open').click();await p.locator('#examples-menu').waitFor({state:'visible'});
+ const menu=await p.locator('#examples-menu').boundingBox();assert(menu&&menu.x>=0&&menu.x+menu.width<=360&&menu.y>=0&&menu.y+menu.height<=700,'Reopened menu stays inside mobile viewport: '+JSON.stringify(menu));
+ }finally{await p.keyboard.press('Escape');await p.setViewportSize({width:1440,height:1000});await p.evaluate(()=>window.scrollTo(0,0));}
+});
+await test('examples keyboard dismiss and browse focus',async()=>{
+ await p.locator('#examples-open').focus();await p.keyboard.press('Enter');await p.locator('#examples-menu').waitFor({state:'visible'});
+ assert.equal(await p.locator('#examples-menu [data-sample-index]').count(),7);
+ assert.match(await p.locator('#examples-menu [data-sample-index="0"]').innerText(),/Button counter.*Start here/s);
+ await p.keyboard.press('Escape');assert.equal(await p.locator('#examples-menu').isVisible(),false);assert.equal(await p.evaluate(()=>document.activeElement.id),'examples-open');
+ await p.locator('#examples-open').click();await p.locator('#examples-browse').click();
+ assert(await p.locator('#help-examples').isVisible());assert.equal(await p.locator('#help-examples-tab').getAttribute('aria-selected'),'true');
+ const cards=p.locator('#sample-list .sample');assert.equal(await cards.count(),7);assert.match(await cards.first().innerText(),/Button counter.*Start here/s);
+ for(let i=0;i<7;i++){assert.equal(await cards.nth(i).getByRole('button').count(),1);assert.equal(await cards.nth(i).getByRole('button').innerText(),'Load project');assert.match(await cards.nth(i).innerText(),/Code \+ circuit/);}
+ assert.equal(await p.locator('#sample-list').getByText('Load code',{exact:true}).count(),0);assert.equal(await p.locator('#sample-list').getByText('Load prepared circuit',{exact:true}).count(),0);
+ await p.keyboard.press('Escape');assert.equal(await p.locator('#help').evaluate(e=>e.open),false);assert.equal(await p.evaluate(()=>document.activeElement.id),'examples-open');
+});
 await test('new project stays blank across reload',async()=>{await p.locator('#new-project').click();await assertBlank(p);await p.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');await p.reload();await p.locator('.cm-content').waitFor();await assertBlank(p);});
 await test('empty run',async()=>{await p.locator('#run').click();await p.waitForFunction(()=>document.querySelector('#console').innerText.includes('Write your program'));assert(await p.locator('#stop').isDisabled());});
 await test('load starter cancel preserves work and running simulation',async()=>{
@@ -60,22 +84,46 @@ await test('load starter cancel preserves work and running simulation',async()=>
  await p.locator('.cm-content').fill('setInterval(() => console.log("still running"), 1000);');
  await p.locator('#run').click();await p.waitForFunction(()=>!document.querySelector('#stop').disabled);
  const before=await p.locator('.cm-content').innerText(),beforeURL=p.url();
- p.once('dialog',dialog=>dialog.dismiss());await p.getByRole('button',{name:'Load starter project',exact:true}).click();
+ p.once('dialog',dialog=>dialog.dismiss());await selectSample(p);
  assert.equal(await p.locator('#project-name').inputValue(),'Keep my work');assert.equal(await p.locator('.cm-content').innerText(),before);assert.equal(p.url(),beforeURL);assert(await p.locator('#stop').isEnabled());
 });
 await test('load starter accepts stops and preserves undo',async()=>{
- p.once('dialog',dialog=>{assert.match(dialog.message(),/replace your current work/);return dialog.accept();});await p.locator('#load-starter').click();
- await p.waitForFunction(()=>document.querySelector('#project-name').value==='Button counter'&&!document.querySelector('#load-starter').disabled);
+ p.once('dialog',dialog=>{assert.match(dialog.message(),/replace your current work/);return dialog.accept();});await selectSample(p);
+ await p.waitForFunction(()=>document.querySelector('#project-name').value==='Button counter'&&!document.querySelector('#examples-open').disabled);
  assert(await p.locator('#stop').isDisabled());assert.equal(await p.locator('wokwi-lcd1602').count(),1);
  await p.locator('#undo-load').click();await p.waitForFunction(()=>document.querySelector('#project-name').value==='Keep my work');assert.match(await p.locator('.cm-content').innerText(),/still running/);assert(await p.locator('#stop').isDisabled());
 });
 await test('load starter repeatedly saves reloads and runs counter',async()=>{
- for(let i=0;i<2;i++){p.once('dialog',dialog=>dialog.accept());await p.locator('#load-starter').click();await p.waitForFunction(()=>document.querySelector('#project-name').value==='Button counter'&&!document.querySelector('#load-starter').disabled);assert(await p.locator('#stop').isDisabled());}
+ for(let i=0;i<2;i++){p.once('dialog',dialog=>dialog.accept());await selectSample(p);await p.waitForFunction(()=>document.querySelector('#project-name').value==='Button counter'&&!document.querySelector('#examples-open').disabled);assert(await p.locator('#stop').isDisabled());}
  await p.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');await p.reload();await p.locator('.cm-content').waitFor();assert.equal(await p.locator('#project-name').inputValue(),'Button counter');assert(await p.locator('#stop').isDisabled());
  await p.locator('#run').click();await waitCount(0);await p.locator('.push-toggle').click();await waitCount(1);await p.locator('#stop').click();
  await p.locator('#new-project').click();await assertBlank(p);
 });
-await test('sample run stop rerun',async()=>{await p.locator('#help-open').click();await p.locator('#help-examples-tab').click();await p.locator('#sample-list .sample').first().getByText('Load prepared circuit',{exact:true}).click();assert(await p.locator('#stop').isDisabled());for(let i=0;i<2;i++){await p.locator('#run').click();await p.waitForFunction(()=>document.querySelector('#console').innerText.includes('Hello, little circuit!'),null,{timeout:20000});await p.locator('#stop').click();assert(await p.locator('#stop').isDisabled());}});
+await test('all dropdown examples load code and circuit together',async()=>{
+ const names=['Blink a light','Count the blinks','Press a button','Fade a light','Turn a dial','Move a motor'];
+ for(let index=1;index<=6;index++){
+  p.once('dialog',dialog=>dialog.accept());await selectSample(p,index);
+  await p.waitForFunction(name=>document.querySelector('#project-name').value===name&&!document.querySelector('#examples-open').disabled,names[index-1]);
+  assert(await p.locator('#stop').isDisabled());assert((await p.locator('#parts .part-label').count())>1);assert((await p.locator('.wire-hit').count())>=3);assert.match(await p.locator('.cm-content').innerText(),/five/);
+ }
+});
+await test('sample modal cancel keeps running project and accept supports undo',async()=>{
+ await p.locator('#project-name').fill('Keep modal work');await p.locator('.cm-content').fill('setInterval(() => console.log("modal work"),1000);');await p.locator('#run').click();
+ const before=await p.locator('.cm-content').innerText(),wires=await p.locator('.wire-hit').count(),beforeURL=p.url();
+ await p.locator('#examples-open').click();await p.locator('#examples-browse').click();
+ p.once('dialog',dialog=>dialog.dismiss());await p.locator('#sample-list .sample').first().getByRole('button',{name:'Load project',exact:true}).click();
+ assert.equal(await p.locator('#project-name').inputValue(),'Keep modal work');assert.equal(await p.locator('.cm-content').innerText(),before);assert.equal(await p.locator('.wire-hit').count(),wires);assert.equal(p.url(),beforeURL);assert(await p.locator('#stop').isEnabled());assert(await p.locator('#help').evaluate(e=>e.open));
+ p.once('dialog',dialog=>dialog.accept());await p.locator('#sample-list .sample').first().getByRole('button',{name:'Load project',exact:true}).click();
+ await p.waitForFunction(()=>document.querySelector('#project-name').value==='Button counter'&&!document.querySelector('#examples-open').disabled);assert(await p.locator('#stop').isDisabled());assert.equal(await p.locator('wokwi-lcd1602').count(),1);assert.equal(await p.locator('#help').evaluate(e=>e.open),false);
+ await p.locator('#undo-load').click();await p.waitForFunction(()=>document.querySelector('#project-name').value==='Keep modal work');assert.equal(await p.locator('.cm-content').innerText(),before);assert.equal(await p.locator('.wire-hit').count(),wires);
+});
+await test('repeated activation does not duplicate sample confirmation or overwrite undo',async()=>{
+ await p.locator('#examples-open').click();let confirmations=0;const accept=dialog=>{confirmations++;return dialog.accept();};p.on('dialog',accept);
+ try{await p.locator('#examples-menu [data-sample-index="0"]').evaluate(button=>{button.click();button.click();});await p.waitForFunction(()=>document.querySelector('#project-name').value==='Button counter'&&!document.querySelector('#examples-open').disabled);assert.equal(confirmations,1);}
+ finally{p.off('dialog',accept);}
+ await p.locator('#undo-load').click();await p.waitForFunction(()=>document.querySelector('#project-name').value==='Keep modal work');
+});
+await test('sample run stop rerun',async()=>{await p.locator('#help-open').click();await p.locator('#help-examples-tab').click();p.once('dialog',dialog=>dialog.accept());await p.locator('#sample-list .sample').nth(1).getByRole('button',{name:'Load project',exact:true}).click();assert(await p.locator('#stop').isDisabled());for(let i=0;i<2;i++){await p.locator('#run').click();await p.waitForFunction(()=>document.querySelector('#console').innerText.includes('Hello, little circuit!'),null,{timeout:20000});await p.locator('#stop').click();assert(await p.locator('#stop').isDisabled());}});
 await test('wire remove undo redo',async()=>{await p.waitForFunction(()=>document.querySelectorAll('.wire-hit').length===3);await p.locator('.wire-hit').first().focus();await p.keyboard.press('Enter');await p.locator('#remove-selected').click();assert.equal(await p.locator('.wire-hit').count(),2);await p.locator('#circuit-undo').click();await p.waitForFunction(()=>document.querySelectorAll('.wire-hit').length===3);await p.locator('#circuit-redo').click();await p.waitForFunction(()=>document.querySelectorAll('.wire-hit').length===2);await p.locator('#circuit-undo').click();});
 await test('component movement and connecting pins',async()=>{
  await p.locator('#fit-circuit').click();
@@ -108,16 +156,16 @@ await test('invalid share preserves saved work',async()=>{
 const startupFixture={version:2,name:'Saved priority fixture',platform:'uno',entry:'index.js',selectedFile:'index.js',files:{'index.js':'// Keep this saved source'},parts:[{id:'board',type:'uno',x:200,y:200}],wires:[]};
 const sharedFixture={...startupFixture,name:'Shared priority fixture',files:{'index.js':'// Keep this shared source'}};
 const sharedHash='#project='+deflateSync(JSON.stringify(sharedFixture)).toString('base64url');
-await test('load starter clears shared URL only after confirmation',async()=>{
+for(const [index,name] of [[0,'Button counter'],[1,'Blink a light']])await test(name+' clears shared URL only after confirmation',async()=>{
  const isolated=await browser.newContext({viewport:{width:1440,height:1000}});
  try{
   const q=await isolated.newPage();q.on('pageerror',e=>errors.push(e.message));await q.goto(url+'?review=starter'+sharedHash);await q.locator('.cm-content').waitFor();
-  q.once('dialog',dialog=>dialog.dismiss());await q.locator('#load-starter').click();assert(q.url().endsWith(sharedHash));assert.equal(await q.locator('#project-name').inputValue(),sharedFixture.name);
-  q.once('dialog',dialog=>dialog.accept());await q.locator('#load-starter').click();await q.waitForFunction(()=>!location.hash);assert.equal(new URL(q.url()).search,'?review=starter');assert(await q.locator('#stop').isDisabled());
+  q.once('dialog',dialog=>dialog.dismiss());await selectSample(q,index);assert(q.url().endsWith(sharedHash));assert.equal(await q.locator('#project-name').inputValue(),sharedFixture.name);
+  q.once('dialog',dialog=>dialog.accept());await selectSample(q,index);await q.waitForFunction(()=>!location.hash);assert.equal(new URL(q.url()).search,'?review=starter');assert(await q.locator('#stop').isDisabled());
   // Undo also persists without letting the old share override the saved project.
   await q.locator('#undo-load').click();await q.waitForFunction(()=>document.querySelector('#project-name').value==='Shared priority fixture');
-  q.once('dialog',dialog=>dialog.accept());await q.locator('#load-starter').click();await q.waitForFunction(()=>document.querySelector('#project-name').value==='Button counter'&&!document.querySelector('#load-starter').disabled);
-  await q.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');let dialogs=0;q.on('dialog',dialog=>{dialogs++;return dialog.dismiss();});await q.reload();await q.locator('.cm-content').waitFor();assert.equal(await q.locator('#project-name').inputValue(),'Button counter');assert.equal(dialogs,0);assert(await q.locator('#stop').isDisabled());
+  q.once('dialog',dialog=>dialog.accept());await selectSample(q,index);await q.waitForFunction(expected=>document.querySelector('#project-name').value===expected&&!document.querySelector('#examples-open').disabled,name);
+  await q.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');let dialogs=0;q.on('dialog',dialog=>{dialogs++;return dialog.dismiss();});await q.reload();await q.locator('.cm-content').waitFor();assert.equal(await q.locator('#project-name').inputValue(),name);assert.equal(dialogs,0);assert(await q.locator('#stop').isDisabled());
  }finally{await isolated.close();}
 });
 for(const fixture of [
