@@ -55,6 +55,26 @@ await test('counter run press twice stop and rerun',async()=>{
 for(const width of [360,390,768,1440]) await test('layout '+width,async()=>{await p.setViewportSize({width,height:1000});await p.waitForTimeout(150);const m=await p.evaluate(()=>({viewport:innerWidth,scroll:document.documentElement.scrollWidth,font:getComputedStyle(document.body).fontFamily}));assert(m.scroll<=width,JSON.stringify(m));assert.match(m.font,/Open Sans/i);const tagline=await p.locator('.brand-tagline').boundingBox();assert(tagline&&tagline.x>=0&&tagline.x+tagline.width<=width,'Tagline stays inside viewport');await p.screenshot({path:`browser-test-results/prefix-${width}.png`,fullPage:true});});
 await test('new project stays blank across reload',async()=>{await p.locator('#new-project').click();await assertBlank(p);await p.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');await p.reload();await p.locator('.cm-content').waitFor();await assertBlank(p);});
 await test('empty run',async()=>{await p.locator('#run').click();await p.waitForFunction(()=>document.querySelector('#console').innerText.includes('Write your program'));assert(await p.locator('#stop').isDisabled());});
+await test('load starter cancel preserves work and running simulation',async()=>{
+ await p.locator('#project-name').fill('Keep my work');
+ await p.locator('.cm-content').fill('setInterval(() => console.log("still running"), 1000);');
+ await p.locator('#run').click();await p.waitForFunction(()=>!document.querySelector('#stop').disabled);
+ const before=await p.locator('.cm-content').innerText(),beforeURL=p.url();
+ p.once('dialog',dialog=>dialog.dismiss());await p.getByRole('button',{name:'Load starter project',exact:true}).click();
+ assert.equal(await p.locator('#project-name').inputValue(),'Keep my work');assert.equal(await p.locator('.cm-content').innerText(),before);assert.equal(p.url(),beforeURL);assert(await p.locator('#stop').isEnabled());
+});
+await test('load starter accepts stops and preserves undo',async()=>{
+ p.once('dialog',dialog=>{assert.match(dialog.message(),/replace your current work/);return dialog.accept();});await p.locator('#load-starter').click();
+ await p.waitForFunction(()=>document.querySelector('#project-name').value==='Button counter'&&!document.querySelector('#load-starter').disabled);
+ assert(await p.locator('#stop').isDisabled());assert.equal(await p.locator('wokwi-lcd1602').count(),1);
+ await p.locator('#undo-load').click();await p.waitForFunction(()=>document.querySelector('#project-name').value==='Keep my work');assert.match(await p.locator('.cm-content').innerText(),/still running/);assert(await p.locator('#stop').isDisabled());
+});
+await test('load starter repeatedly saves reloads and runs counter',async()=>{
+ for(let i=0;i<2;i++){p.once('dialog',dialog=>dialog.accept());await p.locator('#load-starter').click();await p.waitForFunction(()=>document.querySelector('#project-name').value==='Button counter'&&!document.querySelector('#load-starter').disabled);assert(await p.locator('#stop').isDisabled());}
+ await p.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');await p.reload();await p.locator('.cm-content').waitFor();assert.equal(await p.locator('#project-name').inputValue(),'Button counter');assert(await p.locator('#stop').isDisabled());
+ await p.locator('#run').click();await waitCount(0);await p.locator('.push-toggle').click();await waitCount(1);await p.locator('#stop').click();
+ await p.locator('#new-project').click();await assertBlank(p);
+});
 await test('sample run stop rerun',async()=>{await p.locator('#help-open').click();await p.locator('#help-examples-tab').click();await p.locator('#sample-list .sample').first().getByText('Load prepared circuit',{exact:true}).click();assert(await p.locator('#stop').isDisabled());for(let i=0;i<2;i++){await p.locator('#run').click();await p.waitForFunction(()=>document.querySelector('#console').innerText.includes('Hello, little circuit!'),null,{timeout:20000});await p.locator('#stop').click();assert(await p.locator('#stop').isDisabled());}});
 await test('wire remove undo redo',async()=>{await p.waitForFunction(()=>document.querySelectorAll('.wire-hit').length===3);await p.locator('.wire-hit').first().focus();await p.keyboard.press('Enter');await p.locator('#remove-selected').click();assert.equal(await p.locator('.wire-hit').count(),2);await p.locator('#circuit-undo').click();await p.waitForFunction(()=>document.querySelectorAll('.wire-hit').length===3);await p.locator('#circuit-redo').click();await p.waitForFunction(()=>document.querySelectorAll('.wire-hit').length===2);await p.locator('#circuit-undo').click();});
 await test('component movement and connecting pins',async()=>{
@@ -88,6 +108,18 @@ await test('invalid share preserves saved work',async()=>{
 const startupFixture={version:2,name:'Saved priority fixture',platform:'uno',entry:'index.js',selectedFile:'index.js',files:{'index.js':'// Keep this saved source'},parts:[{id:'board',type:'uno',x:200,y:200}],wires:[]};
 const sharedFixture={...startupFixture,name:'Shared priority fixture',files:{'index.js':'// Keep this shared source'}};
 const sharedHash='#project='+deflateSync(JSON.stringify(sharedFixture)).toString('base64url');
+await test('load starter clears shared URL only after confirmation',async()=>{
+ const isolated=await browser.newContext({viewport:{width:1440,height:1000}});
+ try{
+  const q=await isolated.newPage();q.on('pageerror',e=>errors.push(e.message));await q.goto(url+'?review=starter'+sharedHash);await q.locator('.cm-content').waitFor();
+  q.once('dialog',dialog=>dialog.dismiss());await q.locator('#load-starter').click();assert(q.url().endsWith(sharedHash));assert.equal(await q.locator('#project-name').inputValue(),sharedFixture.name);
+  q.once('dialog',dialog=>dialog.accept());await q.locator('#load-starter').click();await q.waitForFunction(()=>!location.hash);assert.equal(new URL(q.url()).search,'?review=starter');assert(await q.locator('#stop').isDisabled());
+  // Undo also persists without letting the old share override the saved project.
+  await q.locator('#undo-load').click();await q.waitForFunction(()=>document.querySelector('#project-name').value==='Shared priority fixture');
+  q.once('dialog',dialog=>dialog.accept());await q.locator('#load-starter').click();await q.waitForFunction(()=>document.querySelector('#project-name').value==='Button counter'&&!document.querySelector('#load-starter').disabled);
+  await q.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');let dialogs=0;q.on('dialog',dialog=>{dialogs++;return dialog.dismiss();});await q.reload();await q.locator('.cm-content').waitFor();assert.equal(await q.locator('#project-name').inputValue(),'Button counter');assert.equal(dialogs,0);assert(await q.locator('#stop').isDisabled());
+ }finally{await isolated.close();}
+});
 for(const fixture of [
  {name:'saved project wins over starter',saved:JSON.stringify(startupFixture),hash:'',expected:startupFixture},
  {name:'fresh valid share wins over starter',saved:null,hash:sharedHash,expected:sharedFixture},
