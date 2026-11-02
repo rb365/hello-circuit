@@ -9,7 +9,7 @@
     "start": "python3 -m http.server 4178 --bind 127.0.0.1 --directory dist",
     "build:runtime": "node scripts/build-runtime.cjs",
     "check:syntax": "node scripts/check-syntax.mjs",
-    "test": "node scripts/check-circuit-history.mjs && node scripts/check-wire-routing.mjs && node scripts/check-workspace-camera.mjs && node scripts/check-project-startup.mjs && node scripts/check-book-coverage.mjs && node scripts/check-starter-project.mjs && node scripts/check-runtime-limits.mjs",
+    "test": "node scripts/check-circuit-history.mjs && node scripts/check-wire-routing.mjs && node scripts/check-workspace-camera.mjs && node scripts/check-project-startup.mjs && node scripts/check-book-coverage.mjs && node scripts/check-starter-project.mjs && node scripts/check-uno-input-modes.mjs && node scripts/check-runtime-limits.mjs",
     "check:dist": "node scripts/check-dist.mjs",
     "package:source": "python3 scripts/package-source.py",
     "check": "npm run check:syntax && npm test && npm run build && npm run package:source && npm run check:dist",

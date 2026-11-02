@@ -111,7 +111,13 @@ class Uno {
     const modes={};
     for(let pin=0;pin<20;pin++){
       const[port,bit]=this.pinLocation(pin),mask=1<<bit;
-      modes[pin]=io?.pins[pin]?.mode??(this.cpu.data[port.portConfig.DDR]&mask?1:this.cpu.data[port.portConfig.PORT]&mask?11:0);
+      const requested=io?.pins[pin]?.mode;
+      const output=Boolean(this.cpu.data[port.portConfig.DDR]&mask);
+      const pullup=!output&&Boolean(this.cpu.data[port.portConfig.PORT]&mask);
+      // Johnny-Five enables a Button pullup using INPUT + digitalWrite(HIGH).
+      // Firmata still calls that INPUT; expose the chip's pullup to the circuit
+      // solver so releasing a grounded button restores HIGH instead of floating.
+      modes[pin]=requested===0&&pullup?11:requested??(output?1:pullup?11:0);
     }
     return { digital, pwm, servo, modes, components:this.peripherals.snapshot(), analog: [...this.analog], simTimeMs: this.cpu.cycles / 16000 };
   }

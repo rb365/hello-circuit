@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {createRequire} from 'node:module';
+const require=createRequire(import.meta.url);
+const {Uno}=require('../src/runtime/uno.js');
+const hex=require('../src/runtime/firmware-data.js');
+const uno=new Uno(hex),[port,bit]=uno.pinLocation(2),mask=1<<bit;
+const io={pins:Array.from({length:20},()=>({mode:0})),MODES:{PWM:3,SERVO:4}};
+assert.equal(uno.snapshot(io).modes[2],0);
+uno.cpu.data[port.portConfig.PORT]|=mask;
+assert.equal(uno.snapshot(io).modes[2],11,'INPUT plus HIGH enables actual AVR pullup');
+uno.input(2,0);
+assert.equal(uno.snapshot(io).modes[2],11,'Pressing the button must not erase the pullup');
+uno.cpu.data[port.portConfig.PORT]&=~mask;
+assert.equal(uno.snapshot(io).modes[2],0,'LOW disables the pullup');
+uno.cpu.data[port.portConfig.DDR]|=mask;uno.cpu.data[port.portConfig.PORT]|=mask;io.pins[2].mode=1;
+assert.equal(uno.snapshot(io).modes[2],1,'Output remains an output');
+io.pins[2].mode=3;assert.equal(uno.snapshot(io).modes[2],3,'PWM modes remain intact');
+console.log('Uno input modes: real-register pullup enable, press, disable and output modes passed.');

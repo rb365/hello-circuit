@@ -25,12 +25,16 @@ let activeBrowser;
 (async()=>{const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),headless:true,args:['--no-sandbox']}); activeBrowser=browser; const results=[],errors=[],http=[];const context=await browser.newContext({viewport:{width:1440,height:1000}});context.setDefaultTimeout(10000);const p=await context.newPage();p.on('pageerror',e=>errors.push(e.message));p.on('response',r=>{if(r.status()>=400)http.push([r.status(),r.url()])});const url=baseURL;const test=async(name,fn)=>{try{await fn();results.push({name,status:'PASS'});}catch(e){results.push({name,status:'FAIL',error:e.message});}console.log(JSON.stringify(results.at(-1)));if(results.at(-1).status==='FAIL')await p.screenshot({path:path.join(output,name.replace(/[^a-z0-9]+/gi,'-')+'-failure.png'),fullPage:true}).catch(()=>{});};
 await p.goto(url);await p.locator('.cm-content').waitFor();await p.waitForTimeout(800);
 const assertBlank=async page=>{await page.waitForFunction(()=>document.querySelectorAll('#parts .part-label').length===1&&document.querySelectorAll('.wire-hit').length===0);assert.equal(await page.locator('.cm-content .cm-line').count(),1);assert.equal(await page.locator('.cm-content .cm-line').first().evaluate(line=>{const copy=line.cloneNode(true);copy.querySelectorAll('.cm-placeholder').forEach(node=>node.remove());return copy.textContent;}),'');assert.equal(await page.locator('#parts .part-label').count(),1);assert.equal(await page.locator('.wire-hit').count(),0);assert(await page.locator('#stop').isDisabled());};
-const waitCount=async count=>p.waitForFunction(expected=>String.fromCharCode(...(document.querySelector('wokwi-lcd1602')?.characters??[])).includes(`Count: ${expected}`),count,{timeout:20000});
+const waitCount=async count=>{
+ try{await p.waitForFunction(expected=>String.fromCharCode(...(document.querySelector('wokwi-lcd1602')?.characters??[])).includes(`Count: ${expected}`),count,{timeout:20000});}
+ catch(cause){const state=await p.evaluate(()=>{const lcd=document.querySelector('wokwi-lcd1602');return {status:document.querySelector('#status')?.textContent,console:document.querySelector('#console')?.innerText,lcdText:String.fromCharCode(...(lcd?.characters??[])),lcdCharacters:Array.from(lcd?.characters??[]),backlight:lcd?.backlight,button:document.querySelector('.push-toggle')?.textContent,led13:document.querySelector('wokwi-arduino-uno')?.led13,warnings:document.querySelector('#warnings')?.textContent};});throw new Error(`Waiting for Count: ${count} failed: ${JSON.stringify(state)}`,{cause});}
+};
 await test('first visit counter without autorun',async()=>{assert.equal(await p.locator('#project-name').inputValue(),'Button counter');assert.match(await p.locator('.cm-content').innerText(),/five\.Button/);assert.equal(await p.locator('wokwi-pushbutton').count(),1);assert.equal(await p.locator('wokwi-lcd1602').count(),1);assert(await p.locator('#stop').isDisabled());assert(await p.locator('#run').isEnabled());assert(!await p.locator('wokwi-arduino-uno').evaluate(board=>board.led13));assert(!await p.locator('wokwi-lcd1602').evaluate(lcd=>String.fromCharCode(...lcd.characters).includes('Count:')));});
 await test('tagline and sage editor accents',async()=>{
  assert.equal(await p.locator('.brand-tagline').innerText(),'Build circuits. Program them in JavaScript.');
  assert.equal(await p.locator('.cm-gutters').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(250, 251, 250)');
- assert.equal(await p.locator('.cm-activeLineGutter').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(234, 240, 238)');
+ const gutterColors=await p.locator('.cm-activeLineGutter').evaluateAll(elements=>elements.map(el=>getComputedStyle(el).backgroundColor));
+ assert(gutterColors.length>0);assert(gutterColors.every(color=>color==='rgb(234, 240, 238)'),JSON.stringify(gutterColors));
  assert.equal(await p.locator('.cm-activeLine').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(244, 247, 245)');
 });
 await test('chapter coverage reflects individual program evidence',async()=>{
@@ -94,7 +98,7 @@ for(const fixture of [
 ])await test(fixture.name,async()=>{
  const isolated=await browser.newContext({viewport:{width:1440,height:1000}});isolated.setDefaultTimeout(10000);
  try{
-  if(fixture.saved!==null)await isolated.addInitScript(saved=>{if(!sessionStorage.getItem('fixture-seeded')){localStorage.setItem('little-circuit-lab-workbench-v2',saved);sessionStorage.setItem('fixture-seeded','yes');}},fixture.saved);
+  if(fixture.saved!==null)await isolated.addInitScript(saved=>{if(window.top!==window)return;if(!sessionStorage.getItem('fixture-seeded')){localStorage.setItem('little-circuit-lab-workbench-v2',saved);sessionStorage.setItem('fixture-seeded','yes');}},fixture.saved);
   const q=await isolated.newPage();q.on('pageerror',e=>errors.push(e.message));q.on('dialog',dialog=>fixture.cancel?dialog.dismiss():dialog.accept());
   await q.goto(url+fixture.hash);await q.locator('.cm-content').waitFor();await q.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');
   if(fixture.blank)await assertBlank(q);else{await q.waitForFunction(name=>document.querySelector('#project-name').value===name,fixture.expected.name);assert.equal(await q.locator('.cm-content').innerText(),fixture.expected.files['index.js']);assert.equal(await q.locator('wokwi-lcd1602').count(),0);}
