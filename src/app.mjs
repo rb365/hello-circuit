@@ -468,10 +468,12 @@ async function loadSample(sample){
 const examplesMenu=$('#examples-menu'),examplesOpen=$('#examples-open');
 function positionExamples(){
  const r=examplesOpen.getBoundingClientRect();
+ if(r.bottom<=0||r.top>=innerHeight){examplesMenu.hidePopover();return;}
  examplesMenu.style.left=Math.max(8,Math.min(r.left,innerWidth-examplesMenu.offsetWidth-8))+'px';
  const below=innerHeight-r.bottom-8,above=r.top-8;
- examplesMenu.style.maxHeight=Math.max(80,Math.max(below,above))+'px';
- examplesMenu.style.top=(below>=examplesMenu.offsetHeight||below>=above?r.bottom+4:Math.max(8,r.top-examplesMenu.offsetHeight-4))+'px';
+ examplesMenu.style.maxHeight=Math.min(innerHeight-16,Math.max(80,below,above))+'px';
+ const top=below>=examplesMenu.offsetHeight||below>=above?r.bottom+4:r.top-examplesMenu.offsetHeight-4;
+ examplesMenu.style.top=Math.max(8,Math.min(top,innerHeight-examplesMenu.offsetHeight-8))+'px';
 }
 examplesMenu.addEventListener('toggle',event=>{
  const open=event.newState==='open';examplesOpen.setAttribute('aria-expanded',String(open));

@@ -54,6 +54,16 @@ await test('counter run press twice stop and rerun',async()=>{
  await p.locator('#run').click();await waitCount(0);await button.click();await waitCount(1);await button.click();await p.locator('#stop').click();
 });
 for(const width of [360,390,768,1440]) await test('layout '+width,async()=>{await p.setViewportSize({width,height:1000});await p.waitForTimeout(150);const m=await p.evaluate(()=>({viewport:innerWidth,scroll:document.documentElement.scrollWidth,font:getComputedStyle(document.body).fontFamily}));assert(m.scroll<=width,JSON.stringify(m));assert.match(m.font,/Open Sans/i);const tagline=await p.locator('.brand-tagline').boundingBox();assert(tagline&&tagline.x>=0&&tagline.x+tagline.width<=width,'Tagline stays inside viewport');await p.locator('#examples-open').click();await p.locator('#examples-menu').waitFor({state:'visible'});const menu=await p.locator('#examples-menu').boundingBox();assert(menu&&menu.x>=0&&menu.x+menu.width<=width&&menu.y>=0&&menu.y+menu.height<=1000,'Examples menu stays inside viewport');await p.screenshot({path:`browser-test-results/prefix-${width}.png`,fullPage:true});await p.keyboard.press('Escape');assert.equal(await p.locator('#examples-menu').isVisible(),false);});
+await test('mobile examples dismiss when toolbar scrolls offscreen and reopen in bounds',async()=>{
+ await p.setViewportSize({width:360,height:700});await p.evaluate(()=>window.scrollTo(0,0));
+ await p.locator('#examples-open').click();await p.locator('#examples-menu').waitFor({state:'visible'});
+ await p.evaluate(()=>{const anchor=document.querySelector('#examples-open').getBoundingClientRect();window.scrollTo(0,window.scrollY+anchor.bottom+20);});
+ await p.waitForFunction(()=>document.querySelector('#examples-open').getBoundingClientRect().bottom<=0);
+ await p.locator('#examples-menu').waitFor({state:'hidden'});assert.equal(await p.locator('#examples-open').getAttribute('aria-expanded'),'false');
+ await p.evaluate(()=>window.scrollTo(0,0));await p.locator('#examples-open').click();await p.locator('#examples-menu').waitFor({state:'visible'});
+ const menu=await p.locator('#examples-menu').boundingBox();assert(menu&&menu.x>=0&&menu.x+menu.width<=360&&menu.y>=0&&menu.y+menu.height<=700,'Reopened menu stays inside mobile viewport');
+ await p.keyboard.press('Escape');await p.setViewportSize({width:1440,height:1000});await p.evaluate(()=>window.scrollTo(0,0));
+});
 await test('examples keyboard dismiss and browse focus',async()=>{
  await p.locator('#examples-open').focus();await p.keyboard.press('Enter');await p.locator('#examples-menu').waitFor({state:'visible'});
  assert.equal(await p.locator('#examples-menu [data-sample-index]').count(),7);
