@@ -475,6 +475,12 @@ function positionExamples(){
  const top=below>=examplesMenu.offsetHeight||below>=above?r.bottom+4:r.top-examplesMenu.offsetHeight-4;
  examplesMenu.style.top=Math.max(8,Math.min(top,innerHeight-examplesMenu.offsetHeight-8))+'px';
 }
+// Position synchronously before the newly opened popover can be painted.
+examplesOpen.onclick=event=>{
+ event.preventDefault();
+ if(examplesMenu.matches(':popover-open'))examplesMenu.hidePopover();
+ else{examplesMenu.showPopover();positionExamples();}
+};
 examplesMenu.addEventListener('toggle',event=>{
  const open=event.newState==='open';examplesOpen.setAttribute('aria-expanded',String(open));
  if(open)positionExamples();
