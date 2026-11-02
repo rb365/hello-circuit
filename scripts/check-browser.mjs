@@ -71,7 +71,7 @@ await test('examples keyboard dismiss and browse focus',async()=>{
  assert.match(await p.locator('#examples-menu [data-sample-index="0"]').innerText(),/Button counter.*Start here/s);
  await p.keyboard.press('Escape');assert.equal(await p.locator('#examples-menu').isVisible(),false);assert.equal(await p.evaluate(()=>document.activeElement.id),'examples-open');
  await p.locator('#examples-open').click();await p.locator('#examples-browse').click();
- assert(await p.locator('#help-examples').isVisible());assert.equal(await p.locator('#help-examples-tab').getAttribute('aria-selected'),'true');
+ assert(await p.locator('#help-examples').isVisible());assert.equal(await p.locator('#help-examples .help-intro').innerText(),'Optional starting points. Load project opens the code and circuit together. Press Run when you’re ready, then explore or change either. Loading a project can be undone.');assert.equal(await p.locator('#help-examples-tab').getAttribute('aria-selected'),'true');
  const cards=p.locator('#sample-list .sample');assert.equal(await cards.count(),7);assert.match(await cards.first().innerText(),/Button counter.*Start here/s);
  for(let i=0;i<7;i++){assert.equal(await cards.nth(i).getByRole('button').count(),1);assert.equal(await cards.nth(i).getByRole('button').innerText(),'Load project');assert.match(await cards.nth(i).innerText(),/Code \+ circuit/);}
  assert.equal(await p.locator('#sample-list').getByText('Load code',{exact:true}).count(),0);assert.equal(await p.locator('#sample-list').getByText('Load prepared circuit',{exact:true}).count(),0);

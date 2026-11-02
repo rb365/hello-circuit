@@ -4,7 +4,7 @@ A browser workbench for following **JavaScript on Things** without a physical bo
 
 The workbench can run locally or as a hosted static website. The same browser runtime is used in both.
 
-**[Try Hello Circuit in your browser](https://little-circuit-lab.skarine545725.chatgpt.site/)** — no hardware or installation required.
+**[Try Hello Circuit in your browser](https://rb365.github.io/hello-circuit/)** — no hardware or installation required.
 
 ## Open locally
 
