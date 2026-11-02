@@ -7,22 +7,32 @@
   "scripts": {
     "build": "node scripts/build.mjs && node scripts/build-runtime.cjs && node scripts/build-notices.mjs",
     "start": "python3 -m http.server 4178 --bind 127.0.0.1 --directory dist",
-    "build:runtime": "node scripts/build-runtime.cjs"
+    "build:runtime": "node scripts/build-runtime.cjs",
+    "check:syntax": "node scripts/check-syntax.mjs",
+    "test": "node scripts/check-circuit-history.mjs && node scripts/check-wire-routing.mjs && node scripts/check-workspace-camera.mjs && node scripts/check-project-startup.mjs && node scripts/check-runtime-limits.mjs",
+    "check:dist": "node scripts/check-dist.mjs",
+    "package:source": "python3 scripts/package-source.py",
+    "check": "npm run check:syntax && npm test && npm run build && npm run package:source && npm run check:dist",
+    "test:browser": "node scripts/check-browser.mjs"
   },
   "dependencies": {
-    "@wokwi/elements": "1.9.2",
     "@codemirror/lang-javascript": "6.2.4",
-    "codemirror": "6.0.2",
     "@codemirror/view": "6.38.6",
-    "esbuild": "0.25.10",
+    "@wokwi/elements": "1.9.2",
     "avr8js": "0.21.1",
-    "johnny-five": "2.1.0",
-    "firmata-io": "2.3.0",
-    "events": "3.3.0",
     "buffer": "6.0.3",
+    "codemirror": "6.0.2",
+    "esbuild": "0.25.10",
+    "events": "3.3.0",
+    "firmata-io": "2.3.0",
+    "johnny-five": "2.1.0",
     "process": "0.11.10"
   },
   "devDependencies": {
-    "browserify": "17.0.1"
+    "browserify": "17.0.1",
+    "playwright": "1.64.1"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
