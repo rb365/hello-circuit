@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import {resolveProjectStartup} from '../src/project-startup.mjs';
 
-const old={version:2,name:'My saved work'},shared={version:2,name:'Shared work'},empty={version:2,name:'Blank'};
+const old={version:2,name:'My saved work'},shared={version:2,name:'Shared work'},empty={version:2,name:'Blank'},starter={version:2,name:'Button counter'};
 let confirmations=0;
-const defaults={saved:JSON.stringify(old),hash:'#project=example',blank:()=>empty,normalize:p=>{if(p?.version!==2)throw new Error('Invalid project');return p;},decode:async()=>shared,confirmReplace:()=>{confirmations++;return true;}};
+const defaults={saved:JSON.stringify(old),hash:'#project=example',blank:()=>empty,starter:()=>starter,normalize:p=>{if(p?.version!==2)throw new Error('Invalid project');return p;},decode:async()=>shared,confirmReplace:()=>{confirmations++;return true;}};
 const resolve=overrides=>resolveProjectStartup({...defaults,...overrides});
 let result=await resolve({});
 assert.deepEqual(result.project,shared);assert.deepEqual(result.previous,old);assert.equal(result.shared,true);assert.equal(confirmations,1);
@@ -15,4 +15,9 @@ result=await resolve({saved:null});assert.deepEqual(result.project,shared);asser
 result=await resolve({saved:'{broken',hash:''});assert.deepEqual(result.project,empty);assert.ok(result.error);
 result=await resolve({saved:null,decode:async()=>{throw new Error('Bad link');}});assert.deepEqual(result.project,empty);
 result=await resolve({decode:async()=>old,confirmReplace:()=>{throw new Error('Identical project must not prompt');}});assert.deepEqual(result.project,old);assert.equal(result.shared,true);
-console.log('Project startup: 9 cases passed (valid/invalid links, confirmation, saved recovery, first visit).');
+result=await resolve({saved:null,hash:''});assert.deepEqual(result.project,starter);assert.equal(result.firstVisit,true);
+result=await resolve({saved:JSON.stringify(empty),hash:''});assert.deepEqual(result.project,empty);assert.equal(result.firstVisit,undefined);
+result=await resolve({saved:'',hash:''});assert.deepEqual(result.project,empty);assert.equal(result.firstVisit,undefined);
+result=await resolve({saved:null,hash:'#help'});assert.deepEqual(result.project,starter);
+result=await resolve({saved:null,hash:'#project=' ,decode:async()=>{throw new Error('Empty link');}});assert.deepEqual(result.project,empty);assert.ok(result.error);
+console.log('Project startup: 14 cases passed (first visit, saved blank, valid/invalid links, confirmation and recovery).');

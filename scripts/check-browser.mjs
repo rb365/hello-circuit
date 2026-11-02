@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import http from 'node:http';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {inflateSync} from 'node:zlib';
+import {inflateSync,deflateSync} from 'node:zlib';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../dist');
 const output=path.resolve('browser-test-results');
 fs.mkdirSync(output,{recursive:true});
@@ -24,8 +24,36 @@ let activeBrowser;
 
 (async()=>{const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),headless:true,args:['--no-sandbox']}); activeBrowser=browser; const results=[],errors=[],http=[];const context=await browser.newContext({viewport:{width:1440,height:1000}});context.setDefaultTimeout(10000);const p=await context.newPage();p.on('pageerror',e=>errors.push(e.message));p.on('response',r=>{if(r.status()>=400)http.push([r.status(),r.url()])});const url=baseURL;const test=async(name,fn)=>{try{await fn();results.push({name,status:'PASS'});}catch(e){results.push({name,status:'FAIL',error:e.message});}console.log(JSON.stringify(results.at(-1)));if(results.at(-1).status==='FAIL')await p.screenshot({path:path.join(output,name.replace(/[^a-z0-9]+/gi,'-')+'-failure.png'),fullPage:true}).catch(()=>{});};
 await p.goto(url);await p.locator('.cm-content').waitFor();await p.waitForTimeout(800);
-await test('blank startup',async()=>{assert.equal(await p.locator('.cm-content .cm-line').count(),1);assert.equal(await p.locator('.cm-content .cm-line').first().evaluate(line=>{const copy=line.cloneNode(true);copy.querySelectorAll('.cm-placeholder').forEach(node=>node.remove());return copy.textContent;}),'');assert.equal(await p.locator('#parts .part-label').count(),1);assert(await p.locator('#stop').isDisabled());});
-for(const width of [360,390,768,1440]) await test('layout '+width,async()=>{await p.setViewportSize({width,height:1000});await p.waitForTimeout(150);const m=await p.evaluate(()=>({viewport:innerWidth,scroll:document.documentElement.scrollWidth,font:getComputedStyle(document.body).fontFamily}));assert(m.scroll<=width,JSON.stringify(m));assert.match(m.font,/Open Sans/i);await p.screenshot({path:`browser-test-results/prefix-${width}.png`,fullPage:true});});
+const assertBlank=async page=>{await page.waitForFunction(()=>document.querySelectorAll('#parts .part-label').length===1&&document.querySelectorAll('.wire-hit').length===0);assert.equal(await page.locator('.cm-content .cm-line').count(),1);assert.equal(await page.locator('.cm-content .cm-line').first().evaluate(line=>{const copy=line.cloneNode(true);copy.querySelectorAll('.cm-placeholder').forEach(node=>node.remove());return copy.textContent;}),'');assert.equal(await page.locator('#parts .part-label').count(),1);assert.equal(await page.locator('.wire-hit').count(),0);assert(await page.locator('#stop').isDisabled());};
+const waitCount=async count=>{
+ try{await p.waitForFunction(expected=>String.fromCharCode(...(document.querySelector('wokwi-lcd1602')?.characters??[])).includes(`Count: ${expected}`),count,{timeout:20000});}
+ catch(cause){const state=await p.evaluate(()=>{const lcd=document.querySelector('wokwi-lcd1602');return {status:document.querySelector('#status')?.textContent,console:document.querySelector('#console')?.innerText,lcdText:String.fromCharCode(...(lcd?.characters??[])),lcdCharacters:Array.from(lcd?.characters??[]),backlight:lcd?.backlight,button:document.querySelector('.push-toggle')?.textContent,led13:document.querySelector('wokwi-arduino-uno')?.led13,warnings:document.querySelector('#warnings')?.textContent};});throw new Error(`Waiting for Count: ${count} failed: ${JSON.stringify(state)}`,{cause});}
+};
+await test('first visit counter without autorun',async()=>{assert.equal(await p.locator('#project-name').inputValue(),'Button counter');assert.match(await p.locator('.cm-content').innerText(),/five\.Button/);assert.equal(await p.locator('wokwi-pushbutton').count(),1);assert.equal(await p.locator('wokwi-lcd1602').count(),1);assert(await p.locator('#stop').isDisabled());assert(await p.locator('#run').isEnabled());assert(!await p.locator('wokwi-arduino-uno').evaluate(board=>board.led13));assert(!await p.locator('wokwi-lcd1602').evaluate(lcd=>String.fromCharCode(...lcd.characters).includes('Count:')));});
+await test('tagline and sage editor accents',async()=>{
+ assert.equal(await p.locator('.brand-tagline').innerText(),'Build circuits. Program them in JavaScript.');
+ assert.equal(await p.locator('.cm-gutters').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(250, 251, 250)');
+ const gutterColors=await p.locator('.cm-activeLineGutter').evaluateAll(elements=>elements.map(el=>getComputedStyle(el).backgroundColor));
+ assert(gutterColors.length>0);assert(gutterColors.every(color=>color==='rgb(234, 240, 238)'),JSON.stringify(gutterColors));
+ assert.equal(await p.locator('.cm-activeLine').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(244, 247, 245)');
+});
+await test('chapter coverage reflects individual program evidence',async()=>{
+ await p.locator('#help-open').click();await p.locator('#help-book-tab').click();
+ const chapters=p.locator('#chapter-list .chapter');
+ assert.equal(await chapters.nth(1).locator('summary .coverage-tag').innerText(),'2/3 programs checked · 1 external');
+ assert.equal(await chapters.nth(3).locator('summary .coverage-tag').innerText(),'5/5 programs checked');
+ const statuses=await chapters.nth(1).locator('.book-example .coverage-tag').allTextContents();assert.equal(statuses.filter(s=>s==='Program checked').length,2);assert.equal(statuses.filter(s=>s==='External workflow').length,1);
+ await p.locator('#help-close').click();
+});
+await test('counter run press twice stop and rerun',async()=>{
+ await p.locator('#run').click();await waitCount(0);assert(await p.locator('wokwi-lcd1602').evaluate(lcd=>lcd.backlight));
+ const button=p.locator('.push-toggle');
+ for(const count of [1,2]){await button.click();await waitCount(count);await p.waitForFunction(on=>document.querySelector('wokwi-arduino-uno').led13===on,count%2===1);await button.click();await p.waitForTimeout(100);}
+ await p.locator('#stop').click();assert(await p.locator('#stop').isDisabled());assert(!await p.locator('wokwi-arduino-uno').evaluate(board=>board.led13));
+ await p.locator('#run').click();await waitCount(0);await button.click();await waitCount(1);await button.click();await p.locator('#stop').click();
+});
+for(const width of [360,390,768,1440]) await test('layout '+width,async()=>{await p.setViewportSize({width,height:1000});await p.waitForTimeout(150);const m=await p.evaluate(()=>({viewport:innerWidth,scroll:document.documentElement.scrollWidth,font:getComputedStyle(document.body).fontFamily}));assert(m.scroll<=width,JSON.stringify(m));assert.match(m.font,/Open Sans/i);const tagline=await p.locator('.brand-tagline').boundingBox();assert(tagline&&tagline.x>=0&&tagline.x+tagline.width<=width,'Tagline stays inside viewport');await p.screenshot({path:`browser-test-results/prefix-${width}.png`,fullPage:true});});
+await test('new project stays blank across reload',async()=>{await p.locator('#new-project').click();await assertBlank(p);await p.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');await p.reload();await p.locator('.cm-content').waitFor();await assertBlank(p);});
 await test('empty run',async()=>{await p.locator('#run').click();await p.waitForFunction(()=>document.querySelector('#console').innerText.includes('Write your program'));assert(await p.locator('#stop').isDisabled());});
 await test('sample run stop rerun',async()=>{await p.locator('#help-open').click();await p.locator('#help-examples-tab').click();await p.locator('#sample-list .sample').first().getByText('Load prepared circuit',{exact:true}).click();assert(await p.locator('#stop').isDisabled());for(let i=0;i<2;i++){await p.locator('#run').click();await p.waitForFunction(()=>document.querySelector('#console').innerText.includes('Hello, little circuit!'),null,{timeout:20000});await p.locator('#stop').click();assert(await p.locator('#stop').isDisabled());}});
 await test('wire remove undo redo',async()=>{await p.waitForFunction(()=>document.querySelectorAll('.wire-hit').length===3);await p.locator('.wire-hit').first().focus();await p.keyboard.press('Enter');await p.locator('#remove-selected').click();assert.equal(await p.locator('.wire-hit').count(),2);await p.locator('#circuit-undo').click();await p.waitForFunction(()=>document.querySelectorAll('.wire-hit').length===3);await p.locator('#circuit-redo').click();await p.waitForFunction(()=>document.querySelectorAll('.wire-hit').length===2);await p.locator('#circuit-undo').click();});
@@ -55,5 +83,30 @@ const q=await context.newPage();q.on('dialog',dialog=>dialog.accept());await q.g
 });
 await test('invalid share preserves saved work',async()=>{
  const q=await context.newPage();await q.goto(url);await q.locator('.cm-content').waitFor();await q.locator('#project-name').fill('Keep this saved project');await q.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');await q.goto(url+'#project=not-valid-compressed-data');await q.reload();await q.waitForFunction(()=>document.querySelector('#project-name').value==='Keep this saved project');assert(await q.locator('#stop').isDisabled());await q.close();
+});
+// Fresh contexts prevent a first-visit fixture from inheriting another test's autosave.
+const startupFixture={version:2,name:'Saved priority fixture',platform:'uno',entry:'index.js',selectedFile:'index.js',files:{'index.js':'// Keep this saved source'},parts:[{id:'board',type:'uno',x:200,y:200}],wires:[]};
+const sharedFixture={...startupFixture,name:'Shared priority fixture',files:{'index.js':'// Keep this shared source'}};
+const sharedHash='#project='+deflateSync(JSON.stringify(sharedFixture)).toString('base64url');
+for(const fixture of [
+ {name:'saved project wins over starter',saved:JSON.stringify(startupFixture),hash:'',expected:startupFixture},
+ {name:'fresh valid share wins over starter',saved:null,hash:sharedHash,expected:sharedFixture},
+ {name:'cancel shared replacement preserves saved source',saved:JSON.stringify(startupFixture),hash:sharedHash,expected:startupFixture,cancel:true},
+ {name:'accept shared replacement preserves undo project',saved:JSON.stringify(startupFixture),hash:sharedHash,expected:sharedFixture,undo:true},
+ {name:'invalid saved payload recovers blank not starter',saved:'{broken',hash:'',blank:true},
+ {name:'invalid fresh share recovers blank not starter',saved:null,hash:'#project=invalid',blank:true}
+])await test(fixture.name,async()=>{
+ const isolated=await browser.newContext({viewport:{width:1440,height:1000}});isolated.setDefaultTimeout(10000);
+ try{
+  if(fixture.saved!==null)await isolated.addInitScript(saved=>{if(window.top!==window)return;if(!sessionStorage.getItem('fixture-seeded')){localStorage.setItem('little-circuit-lab-workbench-v2',saved);sessionStorage.setItem('fixture-seeded','yes');}},fixture.saved);
+  const q=await isolated.newPage();q.on('pageerror',e=>errors.push(e.message));q.on('dialog',dialog=>fixture.cancel?dialog.dismiss():dialog.accept());
+  await q.goto(url+fixture.hash);await q.locator('.cm-content').waitFor();await q.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');
+  if(fixture.blank)await assertBlank(q);else{await q.waitForFunction(name=>document.querySelector('#project-name').value===name,fixture.expected.name);assert.equal(await q.locator('.cm-content').innerText(),fixture.expected.files['index.js']);assert.equal(await q.locator('wokwi-lcd1602').count(),0);}
+  assert(await q.locator('#stop').isDisabled());
+  await q.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');
+  const saved=await q.evaluate(()=>JSON.parse(localStorage.getItem('little-circuit-lab-workbench-v2')));
+  assert.equal(saved.files['index.js'],fixture.blank?'':fixture.expected.files['index.js']);
+  if(fixture.undo){await q.locator('#undo-load').click();await q.waitForFunction(name=>document.querySelector('#project-name').value===name,startupFixture.name);assert.equal(await q.locator('.cm-content').innerText(),startupFixture.files['index.js']);assert(await q.locator('#stop').isDisabled());}
+ }finally{await isolated.close();}
 });
 await test('no page or asset errors' ,async()=>{assert.deepEqual(errors,[]);assert.deepEqual(http,[]);});fs.writeFileSync('browser-test-results/results.json',JSON.stringify({url,results,errors,http},null,2));await browser.close();process.exitCode=results.some(x=>x.status==='FAIL')?1:0;})().catch(e=>{console.error(e);process.exitCode=2;}).finally(async()=>{await activeBrowser?.close();await new Promise(resolve=>server.close(resolve));});
