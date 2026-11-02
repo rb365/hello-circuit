@@ -445,16 +445,54 @@ window.addEventListener('pointerup',()=>{if(suppressPlacementClick)setTimeout(()
 $('#build-cancel').onclick=cancelBuild;$('#circuit-undo').onclick=()=>stepHistory();$('#circuit-redo').onclick=()=>stepHistory(true);$('#pin-search').oninput=renderPinBank;
 $('#circuit-focus-toggle').onclick=()=>{const center=centerPoint(),enabled=document.body.classList.toggle('circuit-focus');$('#circuit-focus-toggle').textContent=enabled?'Code + circuit':'Focus circuit';$('#circuit-focus-toggle').setAttribute('aria-pressed',String(enabled));requestAnimationFrame(()=>{sizeWorkspace();camera.x=viewport.clientWidth/2-center.x*camera.scale;camera.y=viewport.clientHeight/2-center.y*camera.scale;transform();keepPartVisible(selectedPart??pinBankPartId);viewport.focus({preventScroll:true});});};
 
-$('#load-starter').onclick=async()=>{
- if(!window.confirm('Load the starter project and replace your current work? Cancel keeps your project. Undo project change restores it until you leave this page.'))return;
- const button=$('#load-starter');button.disabled=true;
+// Both entry points use the same confirmed, complete-project action.
+let sampleLoading=false;
+async function loadSample(sample){
+ if(sampleLoading)return;
+ if(!window.confirm(`Load ${sample.label??sample.name??sample.title} and replace your current work? Cancel keeps your project. Undo project change restores it until you leave this page.`)){
+  if($('#examples-menu').matches(':popover-open')){$('#examples-menu').hidePopover();$('#examples-open').focus();}
+  return;
+ }
+ sampleLoading=true;
+ const controls=[$('#examples-open'),...document.querySelectorAll('[data-sample-index]')];
+ controls.forEach(button=>button.disabled=true);
+ $('#examples-menu').hidePopover();
  try{
-  await loadProject(starterProject());
-  // A shared URL must not reopen the old project when the starter is reloaded.
+  if(sample.starter){await loadProject(starterProject());$('#help').close();}
+  else await loadExample(sample,true);
+  // Do not let a stale shared URL replace the newly saved example on reload.
   if(location.hash.startsWith('#project='))history.replaceState(history.state,'',location.pathname+location.search);
-  toast('Starter project loaded. Press Run when you’re ready.');
- }finally{button.disabled=false;}
-};
+  toast('Project loaded. Press Run when you’re ready.');
+ }finally{sampleLoading=false;controls.forEach(button=>button.disabled=false);$('#examples-open').focus({preventScroll:true});}
+}
+const examplesMenu=$('#examples-menu'),examplesOpen=$('#examples-open');
+function positionExamples(){
+ const r=examplesOpen.getBoundingClientRect();
+ examplesMenu.style.left=Math.max(8,Math.min(r.left,innerWidth-examplesMenu.offsetWidth-8))+'px';
+ const below=innerHeight-r.bottom-8,above=r.top-8;
+ examplesMenu.style.maxHeight=Math.max(80,Math.max(below,above))+'px';
+ examplesMenu.style.top=(below>=examplesMenu.offsetHeight||below>=above?r.bottom+4:Math.max(8,r.top-examplesMenu.offsetHeight-4))+'px';
+}
+examplesMenu.addEventListener('toggle',event=>{
+ const open=event.newState==='open';examplesOpen.setAttribute('aria-expanded',String(open));
+ if(open)positionExamples();
+});
+examplesOpen.addEventListener('keydown',event=>{
+ if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+  event.preventDefault();examplesMenu.showPopover();positionExamples();
+  const buttons=examplesMenu.querySelectorAll('button');buttons[event.key==='ArrowUp'?buttons.length-1:0].focus();
+ }
+});
+examplesMenu.addEventListener('keydown',event=>{
+ const buttons=[...examplesMenu.querySelectorAll('button')],index=buttons.indexOf(document.activeElement);
+ if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){
+  event.preventDefault();buttons[event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length].focus();
+ }
+ if(event.key==='Escape'){event.preventDefault();examplesMenu.hidePopover();examplesOpen.focus();}
+});
+window.addEventListener('resize',()=>{if(examplesMenu.matches(':popover-open'))positionExamples();});
+window.addEventListener('scroll',()=>{if(examplesMenu.matches(':popover-open'))positionExamples();},true);
+$('#examples-browse').onclick=()=>{examplesMenu.hidePopover();examplesOpen.focus();helpTab('examples');$('#help').showModal();$('#help-examples-tab').focus();};
 $('#project-name').oninput=()=>{project.name=$('#project-name').value;save();};$('#entry-file').onchange=e=>{project.entry=e.target.value;renderFiles();save();};$('#new-project').onclick=()=>loadProject(blank());$('#undo-load').onclick=async()=>{if(!undoProject)return;const previous=undoProject,current=capture();await loadProject(previous,{undo:false});undoProject=current;toast('Project change undone.');};
 function openFileDialog(action){fileAction=action;$('#file-dialog-title').textContent=action==='add'?'Add a file':'Rename this file';$('#file-name').value=action==='add'?'':project.selectedFile;$('#file-error').textContent='';$('#file-dialog').showModal();$('#file-name').focus();}
 $('#add-file').onclick=()=>openFileDialog('add');$('#rename-file').onclick=()=>openFileDialog('rename');$('#file-dialog-close').onclick=()=>$('#file-dialog').close();$('#file-form').onsubmit=e=>{e.preventDefault();const name=$('#file-name').value.trim(),old=project.selectedFile;if(!validName(name)){ $('#file-error').textContent='Use a .js, .json, .html, .css or .sh name, such as Rover.js or app/index.html.';return;}if(Object.hasOwn(project.files,name)&&!(fileAction==='rename'&&name===old)){$('#file-error').textContent='A file with that name already exists.';return;}if(fileAction==='add'&&Object.keys(project.files).length>=30){$('#file-error').textContent='This project already has 30 files.';return;}capture();if(fileAction==='rename'){project.files[name]=project.files[old];if(name!==old)delete project.files[old];if(project.entry===old){if(!name.endsWith('.js')&&!(name.endsWith('.sh')&&['raspi','beaglebone'].includes(project.platform))){$('#file-error').textContent='The entry file must end in .js, or .sh for the virtual Pi/BeagleBone shell.';project.files[old]=project.files[name];if(name!==old)delete project.files[name];return;}project.entry=name;}}else project.files[name]='';project.selectedFile=name;replaceCode(project.files[name]);renderFiles();save();$('#file-dialog').close();};
@@ -493,7 +531,21 @@ function tag(status){const span=document.createElement('span');span.className='c
 function chapterTag(chapter){const coverage=chapterCoverage(chapter),span=document.createElement('span');span.className='coverage-tag '+coverage.className;span.textContent=coverage.label;return span;}
 function link(text,url){const a=document.createElement('a');a.textContent=text;a.href=url;a.target='_blank';a.rel='noopener';return a;}
 for(const chapter of chapters){const details=document.createElement('details');details.className='chapter';const summary=document.createElement('summary'),num=document.createElement('span');num.className='chapter-number';num.textContent=String(chapter.number).padStart(2,'0');summary.append(num,document.createTextNode(chapter.title),chapterTag(chapter));details.append(summary);const body=document.createElement('div');body.className='chapter-body';const desc=document.createElement('p');desc.textContent=chapter.summary??chapter.needs??'';body.append(desc);const actions=document.createElement('div');actions.className='example-actions';actions.append(link('Read this chapter ↗',chapter.url??`https://livebook.manning.com/book/javascript-on-things/chapter-${chapter.number}`),link('Official example source ↗',chapter.sourceUrl??'https://github.com/lyzadanger/javascript-on-things'));body.append(actions);for(const exercise of chapter.exercises??[]){const div=document.createElement('div');div.className='book-example';const row=document.createElement('div'),title=document.createElement('b');title.textContent=exercise.name??exercise.path;row.append(title,tag(exercise.status));div.append(row);const p=document.createElement('p');p.textContent=exercise.note??exercise.needs??'';div.append(p);const example=bookExamples.find(e=>e.sourcePath===exercise.path||e.path===exercise.path);if(example){const buttons=document.createElement('div');buttons.className='example-actions';const button=document.createElement('button');button.className='text-button';button.textContent='Load code';button.onclick=()=>loadExample(example,false);buttons.append(button);if(example.scene){const built=document.createElement('button');built.className='text-button';built.textContent='Load prepared circuit';built.onclick=()=>loadExample(example,true);buttons.append(built);}div.append(buttons);}body.append(div);}details.append(body);$('#chapter-list').append(details);}
-for(const sample of [...examples,...bookExamples.filter(e=>e.featured)]){const card=document.createElement('article');card.className='sample';const h=document.createElement('h3');h.textContent=sample.label??sample.name??sample.title;const p=document.createElement('p');p.textContent=sample.description??sample.note??'';const buttons=document.createElement('div');buttons.className='example-actions';const code=document.createElement('button');code.className='text-button';code.textContent='Load code';code.onclick=()=>loadExample(sample,false);buttons.append(code);if(sample.scene){const prepared=document.createElement('button');prepared.className='text-button';prepared.textContent='Load prepared circuit';prepared.onclick=()=>loadExample(sample,true);buttons.append(prepared);}card.append(h,p,buttons);$('#sample-list').append(card);}
+const samples=[{starter:true,label:'Button counter',description:'Press a button to update the LCD count and toggle the Uno’s built-in light.'},...examples,...bookExamples.filter(e=>e.featured)];
+for(const [index,sample] of samples.entries()){
+ const title=sample.label??sample.name??sample.title;
+ const menuButton=document.createElement('button');menuButton.type='button';menuButton.dataset.sampleIndex=index;
+ menuButton.textContent=title+(sample.starter?' · Start here':'');menuButton.onclick=()=>loadSample(sample);
+ examplesMenu.insertBefore(menuButton,$('#examples-browse'));
+ const card=document.createElement('article');card.className='sample';
+ const h=document.createElement('h3');h.textContent=title;
+ if(sample.starter){const badge=document.createElement('span');badge.className='sample-start';badge.textContent='Start here';h.append(' ',badge);}
+ const p=document.createElement('p');p.textContent=sample.description??sample.note??'';
+ const actions=document.createElement('div');actions.className='sample-load';
+ const button=document.createElement('button');button.type='button';button.className='primary';button.textContent='Load project';button.dataset.sampleIndex=index;button.onclick=()=>loadSample(sample);
+ const supporting=document.createElement('small');supporting.id='sample-contents-'+index;supporting.textContent='Code + circuit';button.setAttribute('aria-describedby',supporting.id);
+ actions.append(button,supporting);card.append(h,p,actions);$('#sample-list').append(card);
+}
 $('#download-project').onclick=()=>{const blob=new Blob([JSON.stringify(capture(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(project.name.replace(/[^\w-]+/g,'-').slice(0,60)||'my-circuit')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);};$('#open-project').onclick=()=>$('#project-file').click();$('#project-file').onchange=async e=>{try{const file=e.target.files[0];if(!file)return;if(file.size>500000)throw new Error('The project is too large.');await loadProject(JSON.parse(await file.text()));toast('Project opened. Press Run when you’re ready.');}catch(error){toast(error.message);}e.target.value='';};
 async function encodeProject(){const stream=new Blob([JSON.stringify(capture())]).stream().pipeThrough(new CompressionStream('deflate')),compressed=new Uint8Array(await new Response(stream).arrayBuffer());let binary='';for(const byte of compressed)binary+=String.fromCharCode(byte);return btoa(binary).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');}
 async function decodeProject(encoded){if(encoded.length>300000)throw new Error('The shared project is too large.');const raw=atob(encoded.replaceAll('-','+').replaceAll('_','/')),bytes=Uint8Array.from(raw,c=>c.charCodeAt(0)),reader=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate')).getReader(),decoder=new TextDecoder();let output='',size=0;while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>500000){await reader.cancel();throw new Error('The shared project is too large.');}output+=decoder.decode(value,{stream:true});}return JSON.parse(output+decoder.decode());}
