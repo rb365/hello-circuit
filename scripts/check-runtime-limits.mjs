@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import createConsoleLimiter from '../src/runtime/console-limit.js';
+let now=0;const messages=[];
+const log=createConsoleLimiter(message=>messages.push(message),String,()=>now);
+for(let i=0;i<10000;i++)log('log',['x']);
+assert.equal(messages.length,101);
+assert.equal(messages.at(-1).level,'warn');
+now=1000;log('log',['x'.repeat(10000),'ignored']);
+assert.equal(messages.length,102);
+assert.equal(messages.at(-1).args.join('').length,6000);
+log('log',Array(200).fill('x'));assert.equal(messages.at(-1).args.length,20);
+console.log('Runtime console: rate, recovery, size and argument bounds passed.');

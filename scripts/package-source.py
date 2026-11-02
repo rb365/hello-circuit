@@ -9,7 +9,7 @@ destination = root / "dist" / "source.zip"
 # also remains buildable without Git metadata.
 if (root / ".git").exists():
     names = subprocess.check_output(
-        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+        ["git", "ls-files", "--cached", "-z"],
         cwd=root,
     ).decode().split("\0")
     files = [root / name for name in names if name]
@@ -22,7 +22,7 @@ with ZipFile(destination, "w", ZIP_DEFLATED) as archive:
             continue
         if any(part in {"node_modules", ".git", ".openai", ".sites-runtime", "__pycache__"} for part in relative.parts):
             continue
-        if file.name in {".DS_Store"} or file.name.endswith(".tar.gz") and "firmware" not in relative.parts:
+        if file.name == ".DS_Store" or file.name.startswith(".env") or file.suffix.lower() in {".pem", ".key", ".p12", ".pfx"} or file.name.endswith(".tar.gz") and "firmware" not in relative.parts:
             continue
         archive.write(file, "little-circuit-lab/" + str(relative))
 print("Editable source ZIP packaged.")

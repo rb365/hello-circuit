@@ -48,8 +48,9 @@ function printable(value) {
   if (value instanceof Error) return value.message;
   try { return JSON.stringify(value); } catch { return String(value); }
 }
+const sendConsole = require('./console-limit.js')(send, printable);
 for (const level of ['log','info','warn','error','debug']) {
-  console[level] = (...args) => send({type:'console',level,args:args.map(printable)});
+  console[level] = (...args) => sendConsole(level, args);
 }
 function failure(error) { send({type:'status',status:'error',message:error.message || String(error),stack:error.stack}); }
 

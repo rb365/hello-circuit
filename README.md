@@ -62,7 +62,7 @@ The workbench was also checked through its visible controls: blank startup, addi
 
 ## Rebuild and redistribute
 
-Install a recent Node.js release, then run `npm ci --ignore-scripts` and `npm run build`. This builds the static frontend, worker and notices; it never publishes. `python3 scripts/package-source.py` packages editable source and prebuilt assets into `dist/source.zip`.
+Install Node.js 24 and Python 3, then run `npm ci --ignore-scripts` and `npm run build`. This builds the static frontend, worker and notices; it never publishes. `python3 scripts/package-source.py` packages editable source and prebuilt assets into `dist/source.zip`.
 
 Original app code is MIT licensed. The author’s example code and sound retain their MIT notice (Copyright 2017 Lyza Gardner). The book’s chapter text and illustrations are not included. Firmware and dependencies retain their own licenses: see `THIRD_PARTY_NOTICES.txt`, `dist/firmware/BUILD.md` and `dist/firmware/source.tar.gz`. Matching firmware source and build flags are included.
 
@@ -73,3 +73,83 @@ The lab is independent and not affiliated with Manning, Arduino, Wokwi or Velxio
 ## Branding and project compatibility
 
 Hello Circuit uses the supplied circuit speech-bubble logo and bundled Open Sans fonts. Font licensing is included in `dist/assets/hello-circuit/fonts/` and the third-party notices. The existing hosted URL, package identifier, storage key, project format and browser-agent tool names retain their original names so existing links and saved projects continue to work. Historical artwork and copyright notices retain their original attribution.
+
+
+## CI, production, and staging
+
+The `CI and Pages` workflow installs the lockfile with lifecycle scripts disabled,
+runs JavaScript syntax checks, the history/wire-routing/camera/startup/console regression suites,
+rebuilds both bundles and license notices, packages editable source, and validates
+local asset URLs at both `/` and `/hello-circuit/`. CI also installs Chromium and
+runs browser acceptance at the project-site path, retaining screenshots/logs for
+seven days. Run the same gates locally:
+
+```sh
+npm ci --ignore-scripts
+npm run check
+npx playwright install --with-deps chromium
+npm run test:browser
+```
+
+`check:syntax` is a syntax check, not a style linter or type checker. The JSON files
+in `validation/` record earlier manual/program checks; CI does **not** replay all
+of those historical browser or electrical-model checks. The browser smoke suite covers only its explicit assertions; full simulator,
+accessibility, and visual review remain release checks.
+
+### Production
+
+Enable **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+Only a successful workflow on `main` can deploy to the `github-pages` environment;
+pull requests cannot publish. The expected project-site address is
+<https://rb365.github.io/hello-circuit/>. The workflow rebuilds from source rather
+than trusting committed bundles and publishes the exact checked `dist/` artifact.
+Asset URLs are relative so the same output also works at a custom-domain root.
+No deployment secret or personal access token is required. Actions are pinned to
+full commit SHAs; update these intentionally as upstream releases change.
+
+Restrict the `github-pages` environment to `main`, and protect `main` with pull
+request review and the **Check and build** status check. Those repository settings
+are separate from this source change. To roll back, revert the faulty change on
+`main` and let the same check/deploy pipeline run; do not bypass the checks.
+
+### Staging without changing production
+
+Every PR produces a seven-day `static-site-<commit>` Actions artifact. Download
+and unzip a trusted revision, then serve that directory on a **different local
+port** (for example `python3 -m http.server 4180 --bind 127.0.0.1`). Use a disposable
+browser profile for unfamiliar contributions. Test at a project subpath as well:
+put the extracted files in a directory named `hello-circuit` and serve its parent,
+then visit `http://127.0.0.1:4180/hello-circuit/`.
+
+Before merging, check blank startup, a known program's Run/Stop/Run and observable
+output, adding/moving/wiring components, Undo/Redo, Download/Open/Share, modal
+close/Escape and keyboard focus, and 360/390/768/1440 px layouts. Check the browser
+console/network panel for failures. After deployment, repeat the smoke check at
+the public URL and verify the Actions deployment points at the expected commit.
+
+This is artifact-based review, **not** an automatically hosted staging URL. For
+shared hosted staging, use a separately approved isolated origin and deploy only
+trusted revisions. A `/staging/` path or another repository on `rb365.github.io`
+shares the same origin/storage and is not a security boundary. Do not use
+`pull_request_target` to run contributor code with deployment permissions, and do
+not deploy PRs over the production Pages artifact.
+
+### Running code safely
+
+Only run projects you trust. Workers isolate computation and let Stop terminate
+a stuck program, but are **not a hostile-code security sandbox**: project code
+can make network requests and access browser APIs available to a same-origin
+worker. Web previews use a sandboxed iframe but may also make network requests.
+Do not enter credentials, API keys, or private data into projects or share links.
+Imported/shared projects wait for an explicit Run; inspect their code first.
+GitHub project sites under one `username.github.io` host share an origin, so use
+an isolated origin/profile when testing untrusted code.
+
+Workflow references: [GitHub Pages custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
+and [configuring the publishing source](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
+
+Review dependency note (2026-11-02): `npm audit --omit=dev --ignore-scripts`
+reported no production dependency vulnerabilities. The full audit reported eight
+low/moderate development-chain advisories (no high/critical); do not interpret
+this as a complete browser-bundle security audit or automatically apply breaking
+`audit fix --force` changes. Recheck before releases.
