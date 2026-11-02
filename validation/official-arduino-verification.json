@@ -1,7 +1,7 @@
 {
   "harnessVersion": 2,
   "verifiedAt": "2026-10-07T07:57:01.365Z",
-  "worker": "/Users/vassiliskarine/Documents/Codex/2026-10-06/can-x20/outputs/little-circuit-lab/dist/assets/runtime.worker.js",
+  "worker": "dist/assets/runtime.worker.js",
   "results": [
     {
       "path": "chapter-02/02-hello-world-johnny-five",

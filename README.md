@@ -4,11 +4,23 @@ A browser workbench for following **JavaScript on Things** without a physical bo
 
 The workbench can run locally or as a hosted static website. The same browser runtime is used in both.
 
+**[Try Hello Circuit in your browser](https://little-circuit-lab.skarine545725.chatgpt.site/)** — no hardware or installation required.
+
 ## Open locally
 
-On this Mac, double-click **Start Local Lab.command**. It opens the workbench at `http://127.0.0.1:4178/`. Keep its terminal window open while using the lab; Ctrl+C stops the local server.
+Clone this repository and serve the included prebuilt app with Python 3:
 
-Alternatively, run `npm start` from the project directory. The prebuilt `dist` folder needs only a static web server. Learners do not need Node.js, npm, a serial connection, or a compilation service to use the browser lab after its assets load. The local launcher uses Python 3, already available on this development machine.
+```sh
+git clone https://github.com/rb365/hello-circuit.git
+cd hello-circuit
+python3 -m http.server 4178 --bind 127.0.0.1 --directory dist
+```
+
+Open `http://127.0.0.1:4178/` in your browser. Keep the terminal open while using the lab; Ctrl+C stops the local server. On Windows, use `py -3` instead of `python3` if needed. Python 3 must be installed.
+
+On macOS, you can also double-click **Start Local Lab.command** to start the server and open the browser.
+
+Alternatively, run `npm start` from the project directory if Node.js and Python 3 are installed. The prebuilt `dist` folder needs only a static web server. Learners do not need Node.js, npm, a serial connection, or a compilation service to use the hosted browser lab after its assets load.
 
 ## Work alongside the book
 
