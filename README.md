@@ -22,6 +22,8 @@ On macOS, you can also double-click **Start Local Lab.command** to start the ser
 
 Alternatively, run `npm start` from the project directory if Node.js and Python 3 are installed. The prebuilt `dist` folder needs only a static web server. Learners do not need Node.js, npm, a serial connection, or a compilation service to use the hosted browser lab after its assets load.
 
+On iPhone and iPad, the Air sensor bench defaults to **Sensor preview**. Use **Run preview** to adjust the simulated dust, eCO₂ estimate, and TVOC values without starting the virtual Uno. **View wiring as text** lists the virtual connections without loading the graphical canvas. **Show board canvas** and **Full Uno simulation** are optional. Preview mode does not execute JavaScript or simulate the wiring.
+
 ## Work alongside the book
 
 1. Choose the book’s board. Arduino Uno is the default; the other boards are labelled virtual API models.
