@@ -106,6 +106,40 @@ class WeatherModel extends Registers {
   snapshot(){return{...this.values};}
 }
 
+// Small CCS811 application-register subset. A selected measurement mode
+// exposes the current synthetic readings immediately; no heater or timing.
+class CCS811Model {
+  constructor(){this.values={eco2:650,tvoc:25};this.reset();}
+  reset(){this.register=0;this.offset=0;this.appStarted=false;this.mode=0;}
+  input(values){
+    for(const [key,min,max] of [['eco2',400,8192],['tvoc',0,1187]]){
+      if(Number.isFinite(values[key]))this.values[key]=Math.max(min,Math.min(max,Math.round(values[key])));
+    }
+  }
+  write(data){
+    if(!data.length)return;
+    this.register=data[0];this.offset=0;
+    if(data.length===1&&this.register===0xf4)this.appStarted=true;
+    if(data.length===2&&this.register===0x01&&this.appStarted){
+      const mode=data[1]&0x70;
+      if(mode<=0x40)this.mode=mode;
+    }
+  }
+  read(count){
+    // Sample once before the first byte; a settings edit cannot split a word.
+    if(this.offset===0){
+      const active=this.appStarted&&this.mode!==0;
+      const status=0x10|(this.appStarted?0x80:0)|(active?0x08:0);
+      const eco2=active?this.values.eco2:0;
+      const tvoc=active?this.values.tvoc:0;
+      this.result=this.register===0x02?[eco2>>8,eco2&255,tvoc>>8,tvoc&255,status,0,0,0]:
+        this.register===0x00?[status]:this.register===0x01?[this.mode]:this.register===0x20?[0x81]:[];
+    }
+    return Array.from({length:count},()=>this.result[this.offset++]??0);
+  }
+  snapshot(){return {...this.values,measuring:this.appStarted&&this.mode!==0};}
+}
+
 class GroveLCD extends CharacterDisplay {
   write(data){const dataMode=Boolean(data[0]&64);for(const byte of data.slice(1))dataMode?this.data(byte):this.command(byte);}
   read(count){return Array(count).fill(0);}
@@ -158,21 +192,23 @@ class PeripheralManager {
         if(item.type==='shift-register')model=new ShiftRegister();
         if(item.type==='compass')model=new CompassModel();
         if(item.type==='weather')model=new WeatherModel();
+        if(item.type==='ccs811')model=new CCS811Model();
         if(item.type==='accelerometer')model=new AccelerometerModel();
         if(item.type==='grove-lcd')model=new GroveLCD();
         if(item.type==='gesture')model=new GestureModel();
         if(item.type==='gps')model={values:{latitude:37.7749,longitude:-122.4194,altitude:20},nextSend:0,busy:false,snapshot(){return {...this.values};}};
       }
       if(!model)continue;
+      if(item.type==='ccs811'&&item.supply===false&&model.item?.supply!==false)model.reset();
       model.item=item;model.manager=this;this.models.set(item.id,model);
       if(item.powered===false)continue;
-      const addresses={compass:30,weather:119,accelerometer:83,'grove-lcd':62,gesture:57};
+      const addresses={compass:30,weather:119,accelerometer:83,'grove-lcd':62,gesture:57,ccs811:0x5a};
       if(item.type in addresses)this.bus.set(item.address??addresses[item.type],model);
       if(item.type==='grove-lcd')this.bus.set(98,new GroveBacklight(model));
       if(item.type==='gesture')this.driveInput(item.pins?.INT,model.interruptLevel);
     }
   }
-  input(id,values){const model=this.models.get(id);if(model&&model.values){if(model.trigger){if(model.item.powered!==false)model.trigger(values);}else Object.assign(model.values,values);if(model.item.type==='weather'&&values.pressurePa!==undefined)model.values.pressure=values.pressurePa;}}
+  input(id,values){const model=this.models.get(id);if(model&&model.values){if(model.trigger){if(model.item.powered!==false)model.trigger(values);}else if(model.input)model.input(values);else Object.assign(model.values,values);if(model.item.type==='weather'&&values.pressurePa!==undefined)model.values.pressure=values.pressurePa;}}
   readI2C(address,register,length){
     const model=this.bus.get(address);if(!model)throw new Error(`No powered I2C device at 0x${address.toString(16)}.`);
     if(register!==null&&register!==undefined)model.write([register]);
