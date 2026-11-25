@@ -45,6 +45,7 @@ async function checkAirPhone(browser){
   const mode=page.locator('#air-run-mode'),canvas=page.locator('#circuit-panel'),wiring=page.locator('#air-wiring summary');
   assert.equal(await mode.inputValue(),'preview');assert(await canvas.isHidden());
   await wiring.click();
+  await page.waitForFunction(()=>document.querySelectorAll('#air-wiring-list li').length===11);
   assert.equal(await page.locator('#air-wiring-list li').count(),11);
   assert.match(await page.locator('#air-wiring-list').innerText(),/Arduino Uno · A4 ↔ CCS811-style gas sensor · SDA/);
   // Check the optional graphical path before Run, then return to the lite view.
