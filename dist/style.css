@@ -721,3 +721,18 @@ b,strong{font-weight:600}
 .sample-start{display:inline-block;font-size:11px;font-weight:600;padding:3px 7px;border-radius:20px;background:#eaf0ee;color:#34554a;vertical-align:middle}
 .sample-load{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
 .sample-load small{color:var(--muted);font-size:12px}
+
+
+/* Event-driven sensor preview, including on resource-constrained phones. */
+#air-runtime p,#air-preview p{margin:5px 0 0}
+#air-runtime select{margin-inline-start:8px;max-width:100%;font:inherit}
+#air-preview{margin:10px 14px}
+#air-preview h2{margin:0;font-size:1rem}
+.air-preview-values{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.air-preview-values label{display:flex;flex-direction:column;gap:3px}
+.air-preview-values input{width:8em;max-width:100%;font:inherit}
+#air-preview-reading{font-weight:700}
+
+#air-wiring,#air-canvas-toggle{margin-top:8px}
+#air-wiring summary{cursor:pointer}
+#air-wiring-list{margin:6px 0;padding-inline-start:24px}

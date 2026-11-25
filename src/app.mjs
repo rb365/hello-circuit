@@ -17,6 +17,8 @@ import {labelFor,classFor,chapterCoverage} from './book-coverage.mjs';
 const $ = selector => document.querySelector(selector);
 const isBoard = type => type==='uno'||definitions[type]?.isBoard;
 const storageKey='little-circuit-lab-workbench-v2';
+const appleMobile=/iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+let airPreview=false,showAirCanvas=!appleMobile,airWiringKey='';
 let project,editor,parts=[],wires=[],worker=null,running=false,ready=false,snapshot={},analysis,wireStart=null,selectedPart=null,selectedWire=null;
 let sceneVersion=0,suppressSave=false,saveTimer,toastTimer,undoProject=null,fileAction='add',previousInputs={},previousDevices='',previousPeripherals='',evalId=0;
 let camera={x:0,y:0,scale:1},audio=null,tones=new Map();
@@ -207,7 +209,7 @@ function normalizeProject(p){
  for(const w of p.wires){if(!w||typeof w.a!=='string'||typeof w.b!=='string'||w.a.length>100||w.b.length>100||!ids.has(w.a.split(':')[0])||!ids.has(w.b.split(':')[0]))throw new Error('A wire in this project is invalid.');}
  const assets={};let assetSize=0;for(const [name,asset]of Object.entries(p.assets??{})){if(!/^(?:\/)?(?:[\w-]+\/)*[\w.-]+\.(mp3|wav|png|jpg|svg)$/.test(name)||name.includes('..')||!asset||typeof asset.base64!=='string'||asset.base64.length>150000||!/^[-\w.+]+\/[-\w.+]+$/.test(asset.mimeType??'')||!/^[A-Za-z0-9+\/=]*$/.test(asset.base64))throw new Error('A project asset is invalid.');assetSize+=asset.base64.length;if(assetSize>250000)throw new Error('Project assets are too large.');assets[name]={mimeType:asset.mimeType,base64:asset.base64};}const board=partList.find(n=>isBoard(n.type));if(p.entry.endsWith('.sh')&&!['raspi','beaglebone'].includes(board.type))throw new Error('Shell files run only on a virtual Pi or BeagleBone board.');return {version:2,name:String(p.name??'Untitled circuit').slice(0,80),platform:board.type==='uno'?'uno':definitions[board.type].platform,entry:p.entry,selectedFile:Object.hasOwn(p.files,p.selectedFile)?p.selectedFile:p.entry,files:Object.fromEntries(files),parts:partList,wires:p.wires.map(w=>({a:w.a,b:w.b,color:/^#[\da-f]{6}$/i.test(w.color??'')?w.color:/:GND|:VSS|:K$|:C$/.test(w.a+w.b)?'#526477':/:5V|:3\.3V|:VCC|:VDD|:V\+/.test(w.a+w.b)?'#ed6f48':'#194ced'})),note:typeof p.note==='string'?p.note.slice(0,2000):'',fixtures:p.fixtures&&typeof p.fixtures==='object'?p.fixtures:undefined,assets};
 }
-async function loadProject(p,{undo=true}={}){const validated=normalizeProject(p);if(undo&&project){undoProject=capture();$('#undo-load').hidden=false;}stop();project=validated;parts=project.parts;wires=project.wires;$('#project-name').value=project.name;replaceCode(project.files[project.selectedFile]);renderFiles();updateNote();await renderScene({fitView:true,resetSelection:true});circuitUndo.length=0;circuitRedo.length=0;updateHistory();save();}
+async function loadProject(p,{undo=true}={}){const validated=normalizeProject(p);if(undo&&project){undoProject=capture();$('#undo-load').hidden=false;}stop();project=validated;parts=project.parts;wires=project.wires;$('#project-name').value=project.name;replaceCode(project.files[project.selectedFile]);renderFiles();updateNote();setAirRunMode();await renderScene({fitView:true,resetSelection:true});circuitUndo.length=0;circuitRedo.length=0;updateHistory();save();}
 function renderFiles(){const tabs=$('#file-tabs'),entries=$('#entry-file');tabs.replaceChildren();entries.replaceChildren();for(const name of Object.keys(project.files)){const tab=document.createElement('button');tab.className='file-tab'+(name===project.selectedFile?' active':'');tab.textContent=name;tab.setAttribute('aria-pressed',String(name===project.selectedFile));tab.addEventListener('click',()=>{project.files[project.selectedFile]=editor.state.doc.toString();project.selectedFile=name;replaceCode(project.files[name]);renderFiles();save();});tabs.append(tab);if(name.endsWith('.js')||name.endsWith('.sh')&&['raspi','beaglebone'].includes(project.platform)){const option=document.createElement('option');option.value=name;option.textContent=name;entries.append(option);}}entries.value=project.entry;$('#delete-file').disabled=Object.keys(project.files).length===1||project.selectedFile===project.entry;$('#code-language').textContent=project.platform==='uno'?'Johnny-Five':'Virtual API model';}
 function updateNote(){const shellAvailable=['raspi','beaglebone'].includes(project.platform);$('#console-mode option[value="shell"]').hidden=!shellAvailable;$('#console-mode option[value="shell"]').disabled=!shellAvailable;if(!shellAvailable)$('#console-mode').value='js';else if(project.entry.endsWith('.sh'))$('#console-mode').value='shell';const messages=['Only run code you trust. Projects can access network and browser APIs. Do not include secrets.'];if(project.platform!=='uno')messages.push('This board’s APIs and pins are simulated in the browser. See Help for supported code and setup differences.');if(project.note)messages.push(project.note);if(project.fixtures?.weather)messages.push('Weather responses come from an editable sample fixture. The book’s Dark Sky service has retired.');$('#project-note').textContent=messages.join(' ');$('#project-note').hidden=!messages.length;$('#board-select').value=parts.find(p=>isBoard(p.type))?.type??'uno';}
 function updateCanvasSurface(){
@@ -359,7 +361,7 @@ function removeSelected(){
 }
 
 function syncInputs(){if(!worker||!analysis)return;const next={...analysis.digitalInputs,...analysis.analogInputs};for(const [pin,value]of Object.entries(next))if(previousInputs[pin]!==value)worker.postMessage({type:'input',pin:/^\d+$/.test(pin)?Number(pin):pin,value});previousInputs=next;const descriptors=JSON.stringify(analysis.peripherals);if(descriptors!==previousPeripherals){worker.postMessage({type:'peripherals',items:analysis.peripherals});previousPeripherals=descriptors;}const devices=parts.filter(p=>['compass','weather','accelerometer','gps','gesture','ccs811'].includes(p.type)).map(p=>({type:'device-input',id:p.id,values:deviceInputValues(p)})),signature=JSON.stringify(devices);if(signature!==previousDevices){for(const d of devices)worker.postMessage(d);previousDevices=signature;}}
-function refresh(){analysis=analyzeCircuit(parts,wires,{...snapshot,running});syncInputs();for(const part of parts){if(!part.el)continue;const state=analysis.components[part.id]??{};const signature=JSON.stringify(state);if(part.lastState!==signature){applyComponentState(part,state);part.lastState=signature;}}updateAudio();$('#warnings').textContent=(analysis.warnings??[]).join(' · ');updateReadings();}
+function refresh(){analysis=analyzeCircuit(parts,wires,{...snapshot,running});syncInputs();for(const part of parts){if(!part.el)continue;const state=analysis.components[part.id]??{};const signature=JSON.stringify(state);if(part.lastState!==signature){applyComponentState(part,state);part.lastState=signature;}}updateAudio();$('#warnings').textContent=(analysis.warnings??[]).join(' · ');updateReadings();updateAirRunMode();updateAirPreview();}
 function renderInspector(){const target=$('#inspector');target.replaceChildren();$('#part-count').textContent=`${parts.length} component${parts.length===1?'':'s'}`;if(selectedWire!==null){$('#inspector-title').textContent='Selected wire';const wire=wires[selectedWire];if(!wire)return;
  const connection=document.createElement('div');connection.className='wire-connection';connection.style.setProperty('--wire-color',wire.color??wireColor);
  for(const [label,key]of [['From',wire.a],['To',wire.b]]){const row=document.createElement('div'),caption=document.createElement('span'),name=document.createElement('b'),pin=document.createElement('code'),description=pinDescription(key);caption.textContent=label;name.textContent=description.component;pin.textContent=description.pin;row.append(caption,name,pin);connection.append(row);}
@@ -371,9 +373,84 @@ function renderInspector(){const target=$('#inspector');target.replaceChildren()
  const readings=document.createElement('div');readings.className='pin-readings';readings.id='component-readings';target.append(readings);updateReadings();}
 function updateReadings(){const root=$('#component-readings'),part=parts.find(p=>p.id===selectedPart);if(!root||!part||!analysis)return;const state=analysis.components[part.id]??{};if(part.type==='resistor')root.textContent=`Voltage: ${(state.voltage??0).toFixed(3)} V · Current: ${((state.current??0)*1000).toFixed(2)} mA · Power: ${((state.watts??0)*1000).toFixed(2)} mW`;else root.textContent=(part.pins??[]).slice(0,20).map(pin=>`${pin.name}: ${(analysis.voltage(part.id+':'+pin.name)??0).toFixed(2)} V`).join(' · ');}
 function updateAudio(){if(!audio)return;const active=new Set();for(const part of parts){if(part.type!=='piezo')continue;const frequency=analysis?.components[part.id]?.frequency??0;if(!running||!frequency)continue;active.add(part.id);let voice=tones.get(part.id);if(!voice){const oscillator=audio.createOscillator(),gain=audio.createGain();oscillator.type='square';gain.gain.value=.025;oscillator.connect(gain).connect(audio.destination);oscillator.start();voice={oscillator,gain};tones.set(part.id,voice);}voice.oscillator.frequency.setValueAtTime(frequency,audio.currentTime);}for(const [id,voice]of tones)if(!active.has(id)){voice.oscillator.stop();tones.delete(id);}}
-function stop({silent=true}={}){$('#web-preview').hidden=true;$('#web-preview-frame').srcdoc='';worker?.terminate();worker=null;running=false;ready=false;snapshot={};previousInputs={};for(const voice of tones.values())voice.oscillator.stop();tones.clear();status('idle','Ready to build');if(parts.length)refresh();if(!silent)log('Stopped. The virtual board has been reset.','system');}
-function run(){const p=capture();if(!p.files[p.entry]?.trim()&&$('#console-mode').value!=='shell'){log('Write your program in '+p.entry+', then press Run. Help has optional examples.','system');editor.focus();return;}stop();running=true;status('connecting','Connecting…');$('#console').replaceChildren();log(`Starting ${definitions[parts.find(p=>isBoard(p.type)).type].name}…`,'system');const AudioContext=window.AudioContext??window.webkitAudioContext;if(AudioContext){audio??=new AudioContext();audio.resume().catch(()=>{});}
- try{worker=new Worker(new URL('./assets/runtime.worker.js', document.baseURI));worker.addEventListener('message',({data})=>{if(data.type==='status'){if(data.status==='ready'){ready=true;status('running','Running');log('Board ready. Your code is running.','system');}else if(data.status==='error'){log(data.message??'The program stopped.','error');stop();status('error','Check your code');}else if(data.status==='stopped'){stop();log(data.message??'Program stopped.','system');}}
+function previewParts(){const dust=parts.find(part=>part.type==='dust-sensor'),gas=parts.find(part=>part.type==='ccs811');return project?.platform==='uno'&&dust&&gas?{dust,gas}:null;}
+function setAirRunMode(){
+ $('#air-run-mode').value=appleMobile?'preview':'uno';
+ showAirCanvas=!appleMobile;
+ if(previewParts()&&!showAirCanvas&&document.body.classList.contains('circuit-focus'))$('#circuit-focus-toggle').click();
+ updateAirRunMode();
+}
+function updateAirRunMode(){
+ const available=!!previewParts(), mode=$('#air-run-mode').value;
+ $('#air-runtime').hidden=!available;
+ const canvasVisible=!available||showAirCanvas;
+ $('#circuit-panel').hidden=!canvasVisible;
+ const canvasToggle=$('#air-canvas-toggle');
+ const toggleText=canvasVisible?'Hide board canvas':'Show board canvas';
+ if(canvasToggle.textContent!==toggleText)canvasToggle.textContent=toggleText;
+ if(canvasToggle.getAttribute('aria-expanded')!==String(canvasVisible))canvasToggle.setAttribute('aria-expanded',String(canvasVisible));
+ if(available&&$('#air-wiring').open){
+  const connections=wires.map(({a,b})=>[pinDescription(a).text,pinDescription(b).text]);
+  const key=JSON.stringify(connections);
+  if(key!==airWiringKey){
+   airWiringKey=key;
+   $('#air-wiring-list').replaceChildren(...(connections.length?connections.map(([a,b])=>`${a} ↔ ${b}`):['No wires connected.']).map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));
+  }
+ }
+ const description=mode==='preview'?'Lightweight mode. Run preview shows sensor readings without executing your code.':appleMobile?'Full simulation runs your code. If it crashes on this device, switch back to Sensor preview.':'Runs your JavaScript on the virtual Uno.';
+ const hint=available?description:'';if($('#air-run-hint').textContent!==hint)$('#air-run-hint').textContent=hint;
+ const label=available&&mode==='preview'?'▶ Run preview':'▶ Run code';
+ for(const id of ['#run','#circuit-run'])if($(id).textContent!==label)$(id).textContent=label;
+ $('#air-run-mode').disabled=running;
+}
+const previewControls=[['dust','dust'],['gas','eco2'],['gas','tvoc']];
+function updateAirPreview(activeInput){
+ if(!airPreview)return;
+ const sensors=previewParts();
+ if(!sensors){stop();return;}
+ const values=[];
+ for(const [sensor,key] of previewControls){
+  const part=sensors[sensor],control=definitions[part.type].controls.find(c=>c.key===key);
+  const raw=part.settings?.[key],value=typeof raw==='number'?Math.round(Math.max(control.min,Math.min(control.max,raw))):control.default;
+  const input=$('#air-preview-'+key);
+  if(input!==activeInput)input.value=value;
+  values.push(value);
+ }
+ const reading=`Dust: ${values[0]} µg/m³ · eCO₂: ${values[1]} ppm (estimate) · TVOC: ${values[2]} ppb`;
+ if($('#air-preview-reading').textContent!==reading)$('#air-preview-reading').textContent=reading;
+}
+for(const [sensor,key] of previewControls){
+ const input=$('#air-preview-'+key);
+ const control=definitions[sensor==='dust'?'dust-sensor':'ccs811'].controls.find(c=>c.key===key);
+ input.min=control.min;input.max=control.max;input.step=control.step;
+ input.oninput=()=>{
+  const part=previewParts()?.[sensor],value=input.valueAsNumber;
+  if(!airPreview||!part||!Number.isFinite(value)||value<control.min||value>control.max)return;
+  const before=cloneState(circuitState());
+  part.settings[key]=Math.round(value);
+  recordCircuit(before,'Change '+control.label,{merge:true});
+  updateAirPreview(input);save();
+ };
+ input.onchange=()=>{updateAirPreview();renderInspector();};
+}
+$('#air-run-mode').onchange=updateAirRunMode;
+$('#air-wiring').ontoggle=updateAirRunMode;
+$('#air-canvas-toggle').onclick=()=>{
+ showAirCanvas=!showAirCanvas;
+ if(!showAirCanvas&&document.body.classList.contains('circuit-focus'))$('#circuit-focus-toggle').click();
+ updateAirRunMode();
+ if(showAirCanvas)requestAnimationFrame(fit);
+};
+function startAirPreview(){
+ stop();airPreview=true;running=true;ready=false;
+ $('#console').replaceChildren();log('Sensor preview active. JavaScript and circuit wiring are not simulated in this mode.','system');
+ $('#air-preview').hidden=false;updateAirPreview();
+ status('running','Preview active');updateAirRunMode();
+ if(document.body.classList.contains('circuit-focus'))$('#circuit-focus-toggle').click();
+}
+function stop({silent=true}={}){const wasPreview=airPreview;airPreview=false;$('#air-preview').hidden=true;$('#web-preview').hidden=true;$('#web-preview-frame').srcdoc='';worker?.terminate();worker=null;running=false;ready=false;snapshot={};previousInputs={};for(const voice of tones.values())voice.oscillator.stop();tones.clear();status('idle','Ready to build');if(parts.length)refresh();updateAirRunMode();if(!silent)log(wasPreview?'Sensor preview stopped.':'Stopped. The virtual board has been reset.','system');}
+function run(){if(previewParts()&&$('#air-run-mode').value==='preview'){startAirPreview();return;}const p=capture();if(!p.files[p.entry]?.trim()&&$('#console-mode').value!=='shell'){log('Write your program in '+p.entry+', then press Run. Help has optional examples.','system');editor.focus();return;}stop();running=true;status('connecting','Connecting…');updateAirRunMode();$('#console').replaceChildren();log(`Starting ${definitions[parts.find(p=>isBoard(p.type)).type].name}…`,'system');try{const AudioContext=window.AudioContext??window.webkitAudioContext;if(AudioContext&&(!previewParts()||parts.some(part=>part.type==='piezo'))){audio??=new AudioContext();audio.resume().catch(()=>{});}
+ worker=new Worker(new URL('./assets/runtime.worker.js', document.baseURI));worker.addEventListener('message',({data})=>{if(data.type==='status'){if(data.status==='ready'){ready=true;status('running','Running');log('Board ready. Your code is running.','system');}else if(data.status==='error'){log(data.message??'The program stopped.','error');stop();status('error','Check your code');}else if(data.status==='stopped'){stop();log(data.message??'Program stopped.','system');}}
  if(data.type==='console')log((data.args??[]).join(' '),data.level);if(data.type==='pins'){snapshot=data;refresh();}if(data.type==='eval-result')log(data.error??data.value,data.error?'error':'log');if(data.type==='repl-context')$('#repl-input').placeholder='Available: '+data.keys.join(', ');if(data.type==='network'&&data.mode==='fixture')log('Using the sample weather response.','system');if(data.type==='web-preview'){const preview=$('#web-preview');preview.hidden=false;$('#web-preview-frame').srcdoc=data.html;$('#web-preview-status').textContent=`Simulated server · port ${data.port??3000} · on this device`;log('Your web page preview is ready. Its server connection is simulated in the browser.','system');}if(data.type==='web-socket')$('#web-preview-frame').contentWindow?.postMessage(data,'*');});worker.addEventListener('error',event=>{log(event.message??'The program could not start.','error');stop();status('error','Check your code');});worker.postMessage({type:'run',code:p.files[p.entry],files:Object.fromEntries(Object.entries(p.files).map(([name,code])=>['/'+name,code])),entry:'/'+p.entry,platform:p.platform,peripherals:analysis.peripherals,fixtures:p.fixtures??{},assets:p.assets??{}});previousInputs={};previousPeripherals='';previousDevices='';refresh();}catch(error){log(error.message,'error');stop();status('error','Could not start');}}
 const theme=EditorView.theme({'&':{fontSize:'14px'},'.cm-content':{caretColor:'#173f40'},'&.cm-focused .cm-selectionBackground, .cm-selectionBackground':{backgroundColor:'#dce8e2'}});
 editor=new EditorView({state:EditorState.create({doc:'',extensions:[basicSetup,javascript(),theme,placeholder('Start with your own code.\n\nFollow JavaScript on Things, or open Help for an optional example.'),EditorView.contentAttributes.of({'aria-label':'JavaScript code editor'}),keymap.of([{key:'Mod-Enter',run:()=>{run();return true;}}]),EditorView.updateListener.of(update=>{if(update.docChanged)save();})]}),parent:$('#editor')});

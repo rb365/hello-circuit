@@ -1,4 +1,4 @@
-import {chromium} from 'playwright';
+import {chromium,webkit,devices} from 'playwright';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import http from 'node:http';
@@ -22,7 +22,63 @@ await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0
 const baseURL=`http://127.0.0.1:${server.address().port}/hello-circuit/`;
 let activeBrowser;
 
-(async()=>{const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),headless:true,args:['--no-sandbox']}); activeBrowser=browser; const results=[],errors=[],http=[];const context=await browser.newContext({viewport:{width:1440,height:1000}});context.setDefaultTimeout(10000);const p=await context.newPage();p.on('pageerror',e=>errors.push(e.message));p.on('response',r=>{if(r.status()>=400)http.push([r.status(),r.url()])});const url=baseURL;const test=async(name,fn)=>{try{await fn();results.push({name,status:'PASS'});}catch(e){results.push({name,status:'FAIL',error:e.message});}console.log(JSON.stringify(results.at(-1)));if(results.at(-1).status==='FAIL')await p.screenshot({path:path.join(output,name.replace(/[^a-z0-9]+/gi,'-')+'-failure.png'),fullPage:true}).catch(()=>{});};
+async function checkAirPhone(browser){
+ const context=await browser.newContext({...devices['iPhone 13'],defaultBrowserType:undefined});
+ context.setDefaultTimeout(10000);
+ const page=await context.newPage(),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('crash',()=>errors.push('page crashed'));
+ try{
+  await page.addInitScript(()=>{
+   window.heavyStarts=[];
+   for(const key of ['Worker','AudioContext','webkitAudioContext']){
+    window[key]=function(){window.heavyStarts.push(key);throw new Error('Unexpected '+key);};
+   }
+  });
+  await page.goto(baseURL);
+  await page.locator('.cm-content').waitFor();
+  assert(await page.locator('#air-runtime').isHidden());
+  page.once('dialog',dialog=>dialog.accept());
+  await page.locator('#examples-open').click();
+  await page.locator('#examples-menu').getByRole('button',{name:'Air sensor bench',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelector('#project-name').value==='Air sensor bench'&&!document.querySelector('#examples-open').disabled);
+  const mode=page.locator('#air-run-mode'),canvas=page.locator('#circuit-panel'),wiring=page.locator('#air-wiring summary');
+  assert.equal(await mode.inputValue(),'preview');assert(await canvas.isHidden());
+  await wiring.click();
+  assert.equal(await page.locator('#air-wiring-list li').count(),11);
+  assert.match(await page.locator('#air-wiring-list').innerText(),/Arduino Uno · A4 ↔ CCS811-style gas sensor · SDA/);
+  // Check the optional graphical path before Run, then return to the lite view.
+  await page.locator('#air-canvas-toggle').click();
+  await page.locator('#fit-circuit').click();
+  await page.locator('#circuit-focus-toggle').click();
+  assert(await page.locator('body').evaluate(e=>e.classList.contains('circuit-focus')));
+  await page.locator('#air-canvas-toggle').click();assert(await canvas.isHidden());
+  await page.locator('.cm-content').fill('throw Error("This edited program must not execute in preview");');
+  await page.getByRole('button',{name:'Run preview',exact:false}).first().click();
+  assert.match(await page.locator('#air-preview').innerText(),/without running JavaScript/);
+  assert.match(await page.locator('#air-preview-reading').innerText(),/Dust: 35.*650.*25/);
+  assert(await page.locator('#repl-input').isDisabled());
+  await page.locator('#air-preview-dust').fill('160');
+  await page.locator('#air-preview-eco2').fill('1050');
+  await page.locator('#air-preview-tvoc').fill('140');
+  assert.match(await page.locator('#air-preview-reading').innerText(),/Dust: 160.*1050.*140/);
+  await page.locator('#air-canvas-toggle').click();await page.locator('#fit-circuit').click();await page.locator('#circuit-focus-toggle').click();
+  assert(await page.locator('body').evaluate(e=>e.classList.contains('circuit-focus')));
+  await page.locator('#air-canvas-toggle').click();assert(await canvas.isHidden());
+  await page.locator('#stop').click();assert(await page.locator('#air-preview').isHidden());
+  await mode.selectOption('uno');assert.match(await page.locator('#run').innerText(),/Run code/);
+  await page.waitForFunction(()=>document.querySelector('#save-state').textContent==='Saved on this device');
+  await page.reload();await page.locator('.cm-content').waitFor();
+  assert.equal(await mode.inputValue(),'preview');
+  assert(await canvas.isHidden());
+  await page.locator('#run').click();assert.match(await page.locator('#air-preview-reading').innerText(),/Dust: 160.*1050.*140/);
+  assert.deepEqual(await page.evaluate(()=>window.heavyStarts),[]);
+  assert.deepEqual(errors,[]);
+  await page.screenshot({path:path.join(output,'air-bench-phone-preview.png'),fullPage:true});
+ }finally{await context.close();}
+}
+
+(async()=>{if(process.env.AIR_WEBKIT_ONLY){activeBrowser=await webkit.launch();await checkAirPhone(activeBrowser);console.log('PASS: WebKit iPhone Air bench preview');return;}const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),headless:true,args:['--no-sandbox']}); activeBrowser=browser; const results=[],errors=[],http=[];const context=await browser.newContext({viewport:{width:1440,height:1000}});context.setDefaultTimeout(10000);const p=await context.newPage();p.on('pageerror',e=>errors.push(e.message));p.on('response',r=>{if(r.status()>=400)http.push([r.status(),r.url()])});const url=baseURL;const test=async(name,fn)=>{try{await fn();results.push({name,status:'PASS'});}catch(e){results.push({name,status:'FAIL',error:e.message});}console.log(JSON.stringify(results.at(-1)));if(results.at(-1).status==='FAIL')await p.screenshot({path:path.join(output,name.replace(/[^a-z0-9]+/gi,'-')+'-failure.png'),fullPage:true}).catch(()=>{});};
 await p.goto(url);await p.locator('.cm-content').waitFor();await p.waitForTimeout(800);
 const assertBlank=async page=>{await page.waitForFunction(()=>document.querySelectorAll('#parts .part-label').length===1&&document.querySelectorAll('.wire-hit').length===0);assert.equal(await page.locator('.cm-content .cm-line').count(),1);assert.equal(await page.locator('.cm-content .cm-line').first().evaluate(line=>{const copy=line.cloneNode(true);copy.querySelectorAll('.cm-placeholder').forEach(node=>node.remove());return copy.textContent;}),'');assert.equal(await page.locator('#parts .part-label').count(),1);assert.equal(await page.locator('.wire-hit').count(),0);assert(await page.locator('#stop').isDisabled());};
 const selectSample=async(page,index=0)=>{await page.locator('#examples-open').click();await page.locator(`#examples-menu [data-sample-index="${index}"]`).click();};
@@ -127,6 +183,7 @@ await test('air sensor bench reads adjustable dust and gas through the Uno',asyn
  assert.equal(await p.locator('#console .error').count(),0);await p.locator('#stop').click();
  await p.screenshot({path:path.join(output,'air-sensor-bench.png'),fullPage:true});
 });
+await test('iPhone Air bench uses interactive preview and text wiring without worker or audio',()=>checkAirPhone(browser));
 await test('sample modal cancel keeps running project and accept supports undo',async()=>{
  await p.locator('#project-name').fill('Keep modal work');await p.locator('.cm-content').fill('setInterval(() => console.log("modal work"),1000);');await p.locator('#run').click();
  const before=await p.locator('.cm-content').innerText(),wires=await p.locator('.wire-hit').count(),beforeURL=p.url();
