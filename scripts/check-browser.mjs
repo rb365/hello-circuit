@@ -67,13 +67,13 @@ await test('mobile examples dismiss when toolbar scrolls offscreen and reopen in
 });
 await test('examples keyboard dismiss and browse focus',async()=>{
  await p.locator('#examples-open').focus();await p.keyboard.press('Enter');await p.locator('#examples-menu').waitFor({state:'visible'});
- assert.equal(await p.locator('#examples-menu [data-sample-index]').count(),7);
+ assert.equal(await p.locator('#examples-menu [data-sample-index]').count(),8);
  assert.match(await p.locator('#examples-menu [data-sample-index="0"]').innerText(),/Button counter.*Start here/s);
  await p.keyboard.press('Escape');assert.equal(await p.locator('#examples-menu').isVisible(),false);assert.equal(await p.evaluate(()=>document.activeElement.id),'examples-open');
  await p.locator('#examples-open').click();await p.locator('#examples-browse').click();
  assert(await p.locator('#help-examples').isVisible());assert.equal(await p.locator('#help-examples .help-intro').innerText(),'Optional starting points. Load project opens the code and circuit together. Press Run when you’re ready, then explore or change either. Loading a project can be undone.');assert.equal(await p.locator('#help-examples-tab').getAttribute('aria-selected'),'true');
- const cards=p.locator('#sample-list .sample');assert.equal(await cards.count(),7);assert.match(await cards.first().innerText(),/Button counter.*Start here/s);
- for(let i=0;i<7;i++){assert.equal(await cards.nth(i).getByRole('button').count(),1);assert.equal(await cards.nth(i).getByRole('button').innerText(),'Load project');assert.match(await cards.nth(i).innerText(),/Code \+ circuit/);}
+ const cards=p.locator('#sample-list .sample');assert.equal(await cards.count(),8);assert.match(await cards.first().innerText(),/Button counter.*Start here/s);
+ for(let i=0;i<8;i++){assert.equal(await cards.nth(i).getByRole('button').count(),1);assert.equal(await cards.nth(i).getByRole('button').innerText(),'Load project');assert.match(await cards.nth(i).innerText(),/Code \+ circuit/);}
  assert.equal(await p.locator('#sample-list').getByText('Load code',{exact:true}).count(),0);assert.equal(await p.locator('#sample-list').getByText('Load prepared circuit',{exact:true}).count(),0);
  await p.keyboard.press('Escape');assert.equal(await p.locator('#help').evaluate(e=>e.open),false);assert.equal(await p.evaluate(()=>document.activeElement.id),'examples-open');
 });
@@ -106,6 +106,26 @@ await test('all dropdown examples load code and circuit together',async()=>{
   await p.waitForFunction(name=>document.querySelector('#project-name').value===name&&!document.querySelector('#examples-open').disabled,names[index-1]);
   assert(await p.locator('#stop').isDisabled());assert((await p.locator('#parts .part-label').count())>1);assert((await p.locator('.wire-hit').count())>=3);assert.match(await p.locator('.cm-content').innerText(),/five/);
  }
+});
+await test('air sensor bench reads adjustable dust and gas through the Uno',async()=>{
+ const waitReading=async expected=>{
+  try{await p.waitForFunction(line=>document.querySelector('#console').innerText.includes(line),expected,{timeout:20000});}
+  catch(cause){throw new Error('Missing '+expected+'; console: '+await p.locator('#console').innerText(),{cause});}
+ };
+ p.once('dialog',dialog=>dialog.accept());await p.locator('#examples-open').click();
+ await p.locator('#examples-menu').getByRole('button',{name:'Air sensor bench',exact:true}).click();
+ await p.waitForFunction(()=>document.querySelector('#project-name').value==='Air sensor bench'&&!document.querySelector('#examples-open').disabled);
+ assert(await p.locator('#stop').isDisabled());assert.equal(await p.locator('.wire-hit').count(),11);
+ assert.match(await p.locator('#project-note').innerText(),/Virtual bench only.*not a CO₂ measurement/s);
+ await p.locator('#run').click();await waitReading('Dust: 35 µg/m³');await waitReading('eCO₂: 650 ppm (estimate), TVOC: 25 ppb');
+ await p.locator('#parts [data-id="dust"] .part-label').click();await p.locator('#details-tab').click();
+ await p.getByRole('spinbutton',{name:'Simulated dust (µg/m³)'}).fill('160');await waitReading('Dust: 160 µg/m³');
+ await p.locator('#parts [data-id="gas"] .part-label').click();await p.locator('#details-tab').click();
+ await p.getByRole('spinbutton',{name:'Simulated eCO₂ (ppm)'}).fill('1050');
+ await p.getByRole('spinbutton',{name:'Simulated TVOC (ppb)'}).fill('140');
+ await p.keyboard.press('Tab');await waitReading('eCO₂: 1050 ppm (estimate), TVOC: 140 ppb');
+ assert.equal(await p.locator('#console .error').count(),0);await p.locator('#stop').click();
+ await p.screenshot({path:path.join(output,'air-sensor-bench.png'),fullPage:true});
 });
 await test('sample modal cancel keeps running project and accept supports undo',async()=>{
  await p.locator('#project-name').fill('Keep modal work');await p.locator('.cm-content').fill('setInterval(() => console.log("modal work"),1000);');await p.locator('#run').click();

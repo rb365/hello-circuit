@@ -104,8 +104,12 @@ export function analyzeCircuit(parts,wires,snapshot={}){
   }
   let volts=solve(nodes,edges,fixed);const voltage=endpoint=>volts.get(find(endpoint))??0;
   // Active devices are driven by the voltages at their wired terminals.
+  // The Sharp-style model trades physical LED pulse timing for a steady, illustrative output.
+  const dustPowered=part=>fixed.get(find(key(part,'GND')))===0&&voltage(key(part,'VCC'))>=4.5;
+  const dustVoltage=part=>.5+.008*limit(number(part.settings?.dust,35),0,500);
   for(const part of parts){
     if(part.type==='tmp36'&&voltage(key(part,'VCC'))-voltage(key(part,'GND'))>=2.7)source(key(part,'OUT'),voltage(key(part,'GND'))+tmp36Voltage(part.value));
+    if(part.type==='dust-sensor'&&dustPowered(part))source(key(part,'AO'),dustVoltage(part));
     if(part.type==='gesture'&&voltage(key(part,'VCC'))-voltage(key(part,'GND'))>=2.7)source(key(part,'INT'),snapshot.components?.[part.id]?.interruptLevel===0?voltage(key(part,'GND')):voltage(key(part,'VCC')));
     if(part.type==='mosfet'){
       const driven=board?pinsFor(board).find(p=>modeFor(indexFor(p.name))===3&&find(key(board,p.name))===find(key(part,'G'))):null;
@@ -214,6 +218,7 @@ export function analyzeCircuit(parts,wires,snapshot={}){
     if(part.type==='piezo'){const pins=boardPins(key(part,'2'));const pin=pins.map(indexFor).find(n=>n!==null);state.frequency=ground(key(part,'1'))&&running?(snapshot.tones?.[pin]?.frequency??snapshot.tones?.[pin]??0):0;}
     if(part.type==='motor'){const difference=voltage(key(part,'+'))-voltage(key(part,'-'));state.speed=Math.abs(difference)<.001?0:limit(Math.abs(difference)/Math.max(1,number(part.settings?.voltage,9)),0,1);state.direction=difference<0?-1:1;}
     if(part.type==='hbridge')state.powered=power(key(part,'VCC1'))&&power(key(part,'VCC2'))&&ground(key(part,'GND'));
+    if(part.type==='dust-sensor'){state.powered=dustPowered(part);state.outputVoltage=state.powered?dustVoltage(part):0;}
     if(part.type==='tmp36')state.powered=power(key(part,'VCC'))&&ground(key(part,'GND'));
     if(part.type==='resistor'){state.voltage=voltage(key(part,'1'))-voltage(key(part,'2'));state.current=state.voltage/Math.max(.01,number(part.value,330));state.watts=Math.abs(state.voltage*state.current);const rating=Math.max(.01,number(part.settings?.maxPower,.25));if(state.watts>rating)warnings.push(`Resistor ${part.id} dissipates ${state.watts.toFixed(2)} W in this model, above its ${rating} W rating.`);}
     if(part.type==='optocoupler'){
@@ -237,6 +242,19 @@ export function analyzeCircuit(parts,wires,snapshot={}){
       if(part.type==='compass')state.summary=Math.round(part.value??0)+'°';
       if(part.type==='weather')state.summary=(part.settings?.temperature??25)+' °C';
       if(part.type==='accelerometer')state.summary='X '+(part.settings?.x??0)+'g';
+    }
+    if(part.type==='ccs811'){
+      const supplyVoltage=voltage(key(part,'VCC'));
+      const supply=supplyVoltage>=2.7&&supplyVoltage<=3.6&&ground(key(part,'GND'));
+      const wake=key(part,'WAKE');
+      const wakePin=pinNumber(wake);
+      const awake=ground(wake)||(wakePin!==null&&modeFor(wakePin)===1&&voltage(wake)<.6);
+      const pins={SDA:pinNumber(key(part,'SDA')),SCL:pinNumber(key(part,'SCL'))};
+      const busConnected=(boardSpec.i2cPairs??[]).some(pair=>pair.SDA===pins.SDA&&pair.SCL===pins.SCL);
+      state.powered=supply;
+      state.awake=supply&&awake;
+      state.busConnected=busConnected;
+      peripherals.push({id:part.id,type:part.type,supply,powered:state.awake&&busConnected,pins});
     }
     if(part.type==='gps'){
       state.powered=power(key(part,'VCC'))&&ground(key(part,'GND'));

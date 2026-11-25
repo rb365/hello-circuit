@@ -25,10 +25,13 @@ timers. Incoming messages:
   Virtual platforms accept their snapshot's numeric pin indices or native
   labels. Virtual inputs never overwrite OUTPUT/PWM/SERVO pins.
 - `board-input`: `{pin:'BTN', value:0|1}` for Pico/Puck's onboard button.
-- `peripherals`: `{items:[{id,type,powered,pins,levels?}]}` updates wiring.
+- `peripherals`: `{items:[{id,type,powered,pins,levels?,supply?}]}` updates wiring.
+  CCS811 uses `supply` to distinguish a power cycle from loss of bus connectivity.
 - `device-input`: `{id, values}` updates sensor controls. Weather accepts
   temperature Celsius and `pressurePa`. Gesture accepts direction and an
   incrementing `sequence` so repeating the same direction triggers again.
+  CCS811 accepts synthetic `eco2` (ppm equivalent CO₂, not measured CO₂) and
+  `tvoc` (ppb) values.
 - `key`: `{character, key:{name,ctrl?}}` forwards a terminal keypress.
 - `eval`: `{id,code}` evaluates a REPL expression against `board.repl.inject`
   objects and returns `eval-result` with the same id and value/error.
@@ -56,6 +59,12 @@ Models: HD44780 16×2 parallel LCD, 74HC595 shift register, HMC5883L compass,
 ADXL345 accelerometer, BMP180 calibration/conversion registers, JHD1313M1
 LCD/backlight, NMEA GPS bytes through real AVR SoftwareSerial, and APDS9960
 gesture configuration/status/FIFO registers with an active-low interrupt.
+The CCS811-style model exposes a subset of registers at 0x5A (hardware ID,
+application start, measurement mode, status and algorithm result). It reports
+synthetic readings immediately in a selected measurement mode; it does not
+simulate the heater, conditioning, sample timing, interrupts or calibration.
+The Sharp-style optical dust model instead supplies a steady demonstration
+voltage to the ADC, not an LED pulsing sequence or calibrated particle reading.
 Pico's selected BMP085 and Nokia Graphics APIs use the same sensor controls
 and an original small bitmap font; that font is an explicit approximation.
 

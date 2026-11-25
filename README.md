@@ -60,6 +60,10 @@ Recorded checks include the 22 original Uno programs; full LCD countdown/DONE/pi
 
 The workbench was also checked through its visible controls: blank startup, adding and wiring an LED/resistor, writing code, REPL on/off, multi-file modules, book importing, sensor editing and page-preview messages. Coverage data separates source execution checks from circuit/template review.
 
+## Air sensor bench
+
+Open **Examples → Air sensor bench** to load a wired Uno, mini breadboard, and two simulation-only parts based on photo guesses: a Sharp GP2Y1010-style optical dust module and a CCS811-style gas breakout. Press Run, then select each sensor and change the simulated values in Details. The console reads dust over the Uno's analog input and eCO₂/TVOC over I²C. The dust reading uses a steady teaching curve, not Sharp LED pulse timing or real calibration. eCO₂ is an estimate, not directly measured CO₂. The virtual bench is not a physical wiring guide or a sensor identification.
+
 ## Rebuild and redistribute
 
 Install Node.js 24 and Python 3, then run `npm ci --ignore-scripts` and `npm run build`. This builds the static frontend, worker and notices; it never publishes. `python3 scripts/package-source.py` packages editable source and prebuilt assets into `dist/source.zip`.
